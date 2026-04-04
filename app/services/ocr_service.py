@@ -77,25 +77,66 @@ def _parse_state(text: str) -> str | None:
 def _parse_consumption(text: str) -> float | None:
     """
     Find monthly consumption in kWh.
-    Priority: labelled patterns first, then any number preceding 'kWh'.
+    Priority: labelled patterns first, then any number near 'kWh'.
     Sanity range: 50–5000 kWh (typical Malaysian residential).
+
+    Key challenge: OCR of table-layout bills often puts the numeric value
+    and the "kWh" unit on separate lines. We handle this by also searching
+    a whitespace-flattened version of the text where newlines become spaces.
     """
     text_lower = text.lower()
-    patterns = [
+    # Collapse all whitespace (including newlines) into a single space.
+    # This lets patterns match across OCR line breaks, e.g. "450\nkWh" → "450 kwh".
+    text_flat = re.sub(r'\s+', ' ', text_lower)
+
+    def _extract(pattern, source):
+        for m in re.finditer(pattern, source):
+            try:
+                val = float(m.group(1).replace(",", ""))
+                if 50 <= val <= 5000:
+                    return val
+            except ValueError:
+                pass
+        return None
+
+    # ── Labelled patterns (most reliable) ────────────────────────────────────
+    labeled = [
         # "Jumlah Unit / Total Units  450 kWh"
-        r"(?:jumlah\s+unit|total\s+units?)[^\d]{0,30}(\d[\d,]*(?:\.\d+)?)\s*kwh",
-        # "Penggunaan / Consumption  450 kWh"
-        r"(?:penggunaan|consumption)[^\d]{0,30}(\d[\d,]*(?:\.\d+)?)\s*kwh",
-        # "Unit Guna  450 kWh"
-        r"unit\s+guna[^\d]{0,20}(\d[\d,]*(?:\.\d+)?)\s*kwh",
-        # Fallback: any number immediately before "kwh"
-        r"(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        r"(?:jumlah\s+unit|total\s+units?)[^\d]{0,80}(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # "Penggunaan / Penggunaan Semasa / Consumption"
+        r"(?:penggunaan|consumption)[^\d]{0,80}(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # "Unit Guna / Unit Semasa"
+        r"unit\s+(?:guna|semasa)[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # "Current Month / Current Consumption"
+        r"current\s+(?:month|consumption|use)[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # "Semasa" (standalone label common in newer TNB bills)
+        r"\bsemasa\b[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # "Bil Semasa"
+        r"bil\s+semasa[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
     ]
-    for pattern in patterns:
-        for m in re.finditer(pattern, text_lower):
-            value = float(m.group(1).replace(",", ""))
-            if 50 <= value <= 5000:
-                return value
+
+    # ── Fallback patterns ─────────────────────────────────────────────────────
+    fallback = [
+        # Number immediately before kWh (same line or after flattening)
+        r"(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # kWh appears as a column header; the value follows (e.g. "kWh\n450")
+        r"kwh\W{0,20}(\d[\d,]*(?:\.\d+)?)\b",
+    ]
+
+    # Search labelled patterns on flattened text first, then original
+    for pat in labeled:
+        for src in (text_flat, text_lower):
+            result = _extract(pat, src)
+            if result is not None:
+                return result
+
+    # Then fallback patterns
+    for pat in fallback:
+        for src in (text_flat, text_lower):
+            result = _extract(pat, src)
+            if result is not None:
+                return result
+
     return None
 
 
