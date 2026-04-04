@@ -14,7 +14,7 @@ MAX_FILE_SIZE  = 10 * 1024 * 1024  # 10 MB
 
 class BillScanResponse(BaseModel):
     success:          bool
-    account_number:   str | None
+    state:            str | None
     consumption_kwh:  float | None
     bill_amount_rm:   float | None
     tariff_category:  str | None
@@ -47,7 +47,7 @@ async def scan_bill(file: UploadFile = File(...)):
 
     return BillScanResponse(
         success=result["success"],
-        account_number=result["account_number"],
+        state=result["state"],
         consumption_kwh=result["consumption_kwh"],
         bill_amount_rm=result["bill_amount_rm"],
         tariff_category=result["tariff_category"],

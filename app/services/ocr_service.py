@@ -37,21 +37,39 @@ def _preprocess(image: Image.Image) -> Image.Image:
 # Field parsers
 # ---------------------------------------------------------------------------
 
-def _parse_account_number(text: str) -> str | None:
+def _parse_state(text: str) -> str | None:
     """
-    TNB account numbers are 12 digits formatted as xxxx-xxxx-xxxx.
-    Also accept 12 consecutive digits that OCR may have merged.
+    Detect the Malaysian state from the bill text.
+    TNB bills show the customer address which includes the state name.
     """
-    # Formatted: 1234-5678-9012
-    m = re.search(r"\b(\d{4}[- ]\d{4}[- ]\d{4})\b", text)
-    if m:
-        return re.sub(r"[ ]", "-", m.group(1))
+    text_lower = text.lower()
 
-    # Unformatted 12-digit run (not part of a longer number)
-    m = re.search(r"(?<!\d)(\d{12})(?!\d)", text)
-    if m:
-        d = m.group(1)
-        return f"{d[:4]}-{d[4:8]}-{d[8:]}"
+    # Ordered by specificity — longer/more specific patterns first
+    state_patterns = [
+        # W.P. / Wilayah Persekutuan variants
+        (r'w\.?\s*p\.?\s*putrajaya|putrajaya',              'Putrajaya'),
+        (r'w\.?\s*p\.?\s*labuan|labuan',                    'Labuan'),
+        (r'w\.?\s*p\.?\s*kuala\s+lumpur|wilayah\s+persekutuan\s+kuala\s+lumpur', 'Kuala Lumpur'),
+        # States
+        (r'pulau\s+pinang|p\.?\s*pinang|penang',            'Penang'),
+        (r'negeri\s+sembilan|n\.?\s*sembilan',               'Negeri Sembilan'),
+        (r'\bperlis\b',                                      'Perlis'),
+        (r'\bkedah\b',                                       'Kedah'),
+        (r'\bperak\b',                                       'Perak'),
+        (r'\bselangor\b',                                    'Selangor'),
+        (r'kuala\s+lumpur|\bkl\b',                          'Kuala Lumpur'),
+        (r'\bmelaka\b|\bmalacca\b',                          'Melaka'),
+        (r'\bjohor\b',                                       'Johor'),
+        (r'\bpahang\b',                                      'Pahang'),
+        (r'\bterengganu\b',                                  'Terengganu'),
+        (r'\bkelantan\b',                                    'Kelantan'),
+        (r'\bsabah\b',                                       'Sabah'),
+        (r'\bsarawak\b',                                     'Sarawak'),
+    ]
+
+    for pattern, state_name in state_patterns:
+        if re.search(pattern, text_lower):
+            return state_name
 
     return None
 
@@ -139,23 +157,23 @@ def _parse_tariff_category(text: str) -> str | None:
 # Confidence scoring
 # ---------------------------------------------------------------------------
 
-def _confidence(account: str | None, consumption: float | None,
-                 amount: float | None, tariff: str | None) -> float:
+def _confidence(consumption: float | None, amount: float | None,
+                tariff: str | None, state: str | None) -> float:
     """
-    Simple field-presence score: each field found = 25 points.
-    Consumption is weighted higher as it's the most important field.
+    Field-presence score weighted by importance to the solar assessment.
+    Consumption is the most critical field.
     """
     weights = {
-        "account":     0.20,
-        "consumption": 0.40,
-        "amount":      0.25,
-        "tariff":      0.15,
+        "consumption": 0.50,
+        "amount":      0.30,
+        "tariff":      0.10,
+        "state":       0.10,
     }
     found = {
-        "account":     account is not None,
         "consumption": consumption is not None,
         "amount":      amount is not None,
         "tariff":      tariff is not None,
+        "state":       state is not None,
     }
     score = sum(w for k, w in weights.items() if found[k])
     return round(score, 2)
@@ -172,7 +190,7 @@ def extract_bill_data(image: Image.Image) -> dict:
     Returns
     -------
     dict with keys:
-        account_number        str | None
+        state                 str | None
         consumption_kwh       float | None
         bill_amount_rm        float | None
         tariff_category       str | None
@@ -184,21 +202,21 @@ def extract_bill_data(image: Image.Image) -> dict:
     processed = _preprocess(image)
     raw_text = pytesseract.image_to_string(processed, lang="eng")
 
-    account     = _parse_account_number(raw_text)
     consumption = _parse_consumption(raw_text)
     amount      = _parse_bill_amount(raw_text)
     tariff      = _parse_tariff_category(raw_text)
-    confidence  = _confidence(account, consumption, amount, tariff)
+    state       = _parse_state(raw_text)
+    confidence  = _confidence(consumption, amount, tariff, state)
 
     success = consumption is not None
 
     if success:
         found_fields = [
             f for f, v in [
-                ("account number", account),
                 ("consumption", consumption),
                 ("bill amount", amount),
                 ("tariff", tariff),
+                ("state", state),
             ] if v is not None
         ]
         message = f"Extracted: {', '.join(found_fields)}."
@@ -209,7 +227,7 @@ def extract_bill_data(image: Image.Image) -> dict:
         )
 
     return {
-        "account_number":   account,
+        "state":            state,
         "consumption_kwh":  consumption,
         "bill_amount_rm":   amount,
         "tariff_category":  tariff,
