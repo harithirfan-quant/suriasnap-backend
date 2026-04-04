@@ -32,7 +32,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed Python packages from builder stage
-COPY --from=/install /install /usr/local
+COPY --from=builder /install /usr/local
 
 # Copy application source
 COPY app/ ./app/
