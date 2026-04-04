@@ -145,30 +145,57 @@ def _parse_bill_amount(text: str) -> float | None:
     Find the total amount payable in RM.
     Priority: labelled totals, then highest RM value found (bills show itemised
     amounts that are always smaller than the total).
+
+    Uses a whitespace-flattened copy of the text so amounts split across
+    OCR lines (e.g. "RM\n185.50") are still matched.
     """
     text_lower = text.lower()
+    # Collapse all whitespace/newlines — handles table-layout OCR output
+    text_flat = re.sub(r'\s+', ' ', text_lower)
+
+    def _extract_first(pattern, source):
+        m = re.search(pattern, source)
+        if m:
+            try:
+                val = float(m.group(1).replace(",", ""))
+                if 1 <= val <= 100_000:
+                    return val
+            except ValueError:
+                pass
+        return None
 
     labelled_patterns = [
-        # "Jumlah / Amount  RM 123.45"  or  "RM123.45"
-        r"(?:jumlah\s+(?:yang\s+)?(?:perlu\s+)?dibayar|amount\s+(?:due|payable))[^\d]{0,30}(?:rm\s*)?(\d[\d,]*\.\d{2})",
-        r"(?:jumlah|amount\s+due)[^\d]{0,20}(?:rm\s*)?(\d[\d,]*\.\d{2})",
-        # "TOTAL  RM 123.45"
-        r"total[^\d]{0,20}(?:rm\s*)?(\d[\d,]*\.\d{2})",
+        # "Jumlah Yang Perlu Dibayar / Amount Due  RM 185.50"
+        r"(?:jumlah\s+(?:yang\s+)?(?:perlu\s+)?dibayar|amount\s+(?:due|payable))[^\d]{0,50}(?:rm\s*)?(\d[\d,]*\.\d{2})",
+        r"(?:jumlah|amount\s+due)[^\d]{0,40}(?:rm\s*)?(\d[\d,]*\.\d{2})",
+        # "TOTAL AMOUNT  RM 185.50" / "TOTAL  185.50"
+        r"total\s+(?:amount\s+)?(?:due\s+)?[^\d]{0,30}(?:rm\s*)?(\d[\d,]*\.\d{2})",
+        # "Amaun Dibayar / Amount Paid"
+        r"amaun[^\d]{0,40}(?:rm\s*)?(\d[\d,]*\.\d{2})",
+        # "Bayaran / Payment"
+        r"bayaran[^\d]{0,40}(?:rm\s*)?(\d[\d,]*\.\d{2})",
     ]
-    for pattern in labelled_patterns:
-        m = re.search(pattern, text_lower)
-        if m:
-            value = float(m.group(1).replace(",", ""))
-            if 1 <= value <= 100_000:
-                return value
 
-    # Fallback: collect all RM-prefixed values, return the largest
-    rm_values = [
-        float(v.replace(",", ""))
-        for v in re.findall(r"rm\s*(\d[\d,]*\.\d{2})", text_lower)
-    ]
-    rm_values = [v for v in rm_values if 1 <= v <= 100_000]
-    return max(rm_values) if rm_values else None
+    # Try labelled patterns on flattened text first, then original
+    for pat in labelled_patterns:
+        for src in (text_flat, text_lower):
+            result = _extract_first(pat, src)
+            if result is not None:
+                return result
+
+    # Fallback: collect all RM-prefixed values from flattened text, return largest
+    # (itemised charges are always less than the total)
+    all_rm = []
+    for src in (text_flat, text_lower):
+        for v in re.findall(r"rm\s*(\d[\d,]*\.\d{2})", src):
+            try:
+                val = float(v.replace(",", ""))
+                if 1 <= val <= 100_000:
+                    all_rm.append(val)
+            except ValueError:
+                pass
+
+    return max(all_rm) if all_rm else None
 
 
 def _parse_tariff_category(text: str) -> str | None:
