@@ -1,0 +1,15 @@
+{
+  "tnb": {
+    "energy_charge": {
+      "first_1500_kwh_rm": 0.2703,
+      "above_1500_kwh_rm": 0.3703
+    },
+    "capacity_charge_rm": 0.0455,
+    "network_charge_rm": 0.1285,
+    "retail_charge_rm": 10.0,
+    "retail_waived_below_kwh": 600
+  },
+  "solar_atap": {
+    "export_rate_rm": 0.2703
+  }
+}

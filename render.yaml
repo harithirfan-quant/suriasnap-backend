@@ -1,0 +1,25 @@
+services:
+  - name: suriasnap-backend
+    type: web
+    runtime: docker           # use our Dockerfile (needed for tesseract)
+    plan: free                # free tier – sleeps after 15 min of inactivity
+    region: singapore         # closest region to Malaysia
+    healthCheckPath: /health  # Render uses this to wake the service & detect crashes
+
+    # Build & start are handled by the Dockerfile CMD
+    # (no startCommand needed when using Docker runtime)
+
+    envVars:
+      # Tesseract binary path inside the container
+      - key: TESSERACT_CMD
+        value: /usr/bin/tesseract
+
+      # Comma-separated list of allowed CORS origins.
+      # After deploying the frontend, add your Vercel URL here.
+      # Example: https://suriasnap.vercel.app,https://suriasnap.my
+      - key: ALLOWED_ORIGINS
+        value: https://suriasnap.vercel.app
+
+      # Uvicorn log level (debug | info | warning | error)
+      - key: LOG_LEVEL
+        value: info

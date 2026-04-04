@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pytesseract
+Pillow
+opencv-python-headless
+python-dotenv
+reportlab

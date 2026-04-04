@@ -1,0 +1,18 @@
+{
+  "Perlis": { "ghi": 5.15 },
+  "Kedah": { "ghi": 5.05 },
+  "Penang": { "ghi": 4.95 },
+  "Perak": { "ghi": 4.85 },
+  "Selangor": { "ghi": 4.70 },
+  "Kuala Lumpur": { "ghi": 4.65 },
+  "Negeri Sembilan": { "ghi": 4.80 },
+  "Melaka": { "ghi": 4.90 },
+  "Johor": { "ghi": 4.70 },
+  "Pahang": { "ghi": 4.80 },
+  "Terengganu": { "ghi": 4.90 },
+  "Kelantan": { "ghi": 4.80 },
+  "Sabah": { "ghi": 5.05 },
+  "Sarawak": { "ghi": 4.65 },
+  "Labuan": { "ghi": 4.95 },
+  "Putrajaya": { "ghi": 4.70 }
+}
