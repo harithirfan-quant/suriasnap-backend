@@ -77,67 +77,99 @@ def _parse_state(text: str) -> str | None:
 def _parse_consumption(text: str) -> float | None:
     """
     Find monthly consumption in kWh.
-    Priority: labelled patterns first, then any number near 'kWh'.
+    Priority (highest → lowest):
+      1. Meter reading difference (Semasa − Dahulu) — most reliable, immune to
+         tariff-tier references like "600 kWh" appearing elsewhere in the bill.
+      2. Explicit TNB labels ("Jumlah Penggunaan Anda", "Total Units", etc.)
+      3. Fallback: any number immediately before or after "kWh".
     Sanity range: 50–5000 kWh (typical Malaysian residential).
-
-    Key challenge: OCR of table-layout bills often puts the numeric value
-    and the "kWh" unit on separate lines. We handle this by also searching
-    a whitespace-flattened version of the text where newlines become spaces.
     """
     text_lower = text.lower()
-    # Collapse all whitespace (including newlines) into a single space.
-    # This lets patterns match across OCR line breaks, e.g. "450\nkWh" → "450 kwh".
+    # Collapse all whitespace/newlines into single spaces so that table cells
+    # split across lines (e.g. "467\nkWh") are matched as "467 kwh".
     text_flat = re.sub(r'\s+', ' ', text_lower)
 
-    def _extract(pattern, source):
+    def _safe_float(s):
+        try:
+            return float(s.replace(",", ""))
+        except ValueError:
+            return None
+
+    def _extract_first(pattern, source):
         for m in re.finditer(pattern, source):
-            try:
-                val = float(m.group(1).replace(",", ""))
-                if 50 <= val <= 5000:
-                    return val
-            except ValueError:
-                pass
+            val = _safe_float(m.group(1))
+            if val is not None and 50 <= val <= 5000:
+                return val
         return None
 
-    # ── Labelled patterns (most reliable) ────────────────────────────────────
+    # ── 1. Meter reading difference: Semasa − Dahulu ─────────────────────────
+    # TNB bills always show a meter table: Dahulu (previous) and Semasa (current).
+    # Computing the difference avoids any confusion with tariff-tier references.
+    meter_patterns = [
+        # "Dahulu  6,695  Semasa  7,162"  (flattened table row)
+        r"dahulu[^\d]{0,20}([\d,]+)[^\d]{0,50}semasa[^\d]{0,20}([\d,]+)",
+        # "Previous  6695  Current  7162"
+        r"previous[^\d]{0,20}([\d,]+)[^\d]{0,50}current[^\d]{0,20}([\d,]+)",
+        # "Bacaan Lama  6695  Bacaan Baru  7162"
+        r"bacaan\s+lama[^\d]{0,20}([\d,]+)[^\d]{0,50}bacaan\s+baru[^\d]{0,20}([\d,]+)",
+    ]
+    for pat in meter_patterns:
+        for src in (text_flat, text_lower):
+            m = re.search(pat, src)
+            if m:
+                prev = _safe_float(m.group(1))
+                curr = _safe_float(m.group(2))
+                if prev is not None and curr is not None:
+                    diff = curr - prev
+                    if 50 <= diff <= 5000:
+                        return diff
+
+    # ── 2. Explicit TNB bill labels ───────────────────────────────────────────
     labeled = [
+        # "Jumlah Penggunaan Anda  kWh  467.00"  (table: label | unit | value)
+        r"jumlah\s+penggunaan\s+anda\s+kwh\s+(\d[\d,]*(?:\.\d+)?)",
+        # "Jumlah Penggunaan Anda  467 kWh"
+        r"jumlah\s+penggunaan\s+anda[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
         # "Jumlah Unit / Total Units  450 kWh"
         r"(?:jumlah\s+unit|total\s+units?)[^\d]{0,80}(\d[\d,]*(?:\.\d+)?)\s*kwh",
-        # "Penggunaan / Penggunaan Semasa / Consumption"
-        r"(?:penggunaan|consumption)[^\d]{0,80}(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # "Penggunaan Semasa / Consumption"
+        r"(?:penggunaan\s+semasa|consumption)[^\d]{0,80}(\d[\d,]*(?:\.\d+)?)\s*kwh",
         # "Unit Guna / Unit Semasa"
         r"unit\s+(?:guna|semasa)[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
         # "Current Month / Current Consumption"
         r"current\s+(?:month|consumption|use)[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
-        # "Semasa" (standalone label common in newer TNB bills)
-        r"\bsemasa\b[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
-        # "Bil Semasa"
+        # "Bil Semasa  467 kWh"
         r"bil\s+semasa[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
     ]
-
-    # ── Fallback patterns ─────────────────────────────────────────────────────
-    fallback = [
-        # Number immediately before kWh (same line or after flattening)
-        r"(\d[\d,]*(?:\.\d+)?)\s*kwh",
-        # kWh appears as a column header; the value follows (e.g. "kWh\n450")
-        r"kwh\W{0,20}(\d[\d,]*(?:\.\d+)?)\b",
-    ]
-
-    # Search labelled patterns on flattened text first, then original
     for pat in labeled:
         for src in (text_flat, text_lower):
-            result = _extract(pat, src)
+            result = _extract_first(pat, src)
             if result is not None:
                 return result
 
-    # Then fallback patterns
-    for pat in fallback:
+    # ── 3. Fallback: any number near "kWh" ───────────────────────────────────
+    # Collect ALL candidate values and return the most plausible one.
+    # We prefer values that do NOT equal common tariff tier thresholds (300, 600)
+    # unless nothing else is available.
+    candidates = []
+    fallback_patterns = [
+        r"(\d[\d,]*(?:\.\d+)?)\s*kwh",   # number before kWh
+        r"kwh\W{0,20}(\d[\d,]*(?:\.\d+)?)\b",  # kWh header then number
+    ]
+    for pat in fallback_patterns:
         for src in (text_flat, text_lower):
-            result = _extract(pat, src)
-            if result is not None:
-                return result
+            for m in re.finditer(pat, src):
+                val = _safe_float(m.group(1))
+                if val is not None and 50 <= val <= 5000:
+                    candidates.append(val)
 
-    return None
+    if not candidates:
+        return None
+
+    # Prefer values that aren't exact tariff tier boundaries
+    tier_boundaries = {300, 600, 900}
+    non_tier = [v for v in candidates if v not in tier_boundaries]
+    return non_tier[0] if non_tier else candidates[0]
 
 
 def _parse_bill_amount(text: str) -> float | None:
