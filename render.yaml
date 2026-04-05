@@ -18,7 +18,7 @@ services:
       # After deploying the frontend, add your Vercel URL here.
       # Example: https://suriasnap.vercel.app,https://suriasnap.my
       - key: ALLOWED_ORIGINS
-        value: https://suriasnap-frontend.vercel.app
+        value: https://suriasnap.vercel.app
 
       # Uvicorn log level (debug | info | warning | error)
       - key: LOG_LEVEL
