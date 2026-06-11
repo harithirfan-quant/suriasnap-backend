@@ -4,5 +4,6 @@ python-multipart
 pytesseract
 Pillow
 opencv-python-headless
+pdf2image
 python-dotenv
 reportlab

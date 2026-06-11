@@ -24,11 +24,13 @@ WORKDIR /app
 #   tesseract-ocr-eng   – English language pack
 #   libgl1              – OpenCV requires libGL
 #   libglib2.0-0        – OpenCV runtime dep
+#   poppler-utils       – PDF rendering for pdf2image (TNB eBill support)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         tesseract-ocr \
         tesseract-ocr-eng \
         libgl1 \
         libglib2.0-0 \
+        poppler-utils \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy installed Python packages from builder stage
