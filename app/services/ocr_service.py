@@ -14,23 +14,90 @@ if tesseract_cmd:
 # Preprocessing
 # ---------------------------------------------------------------------------
 
+# Shorter side is upscaled to this many pixels — roughly 150 DPI for an A4
+# bill, which is the sweet spot between Tesseract accuracy and OCR latency
+# on Render's free-tier CPU. Phone photos are usually larger and untouched.
+TARGET_MIN_SIDE = 1200
+
+# Tilt correction is only applied within this band: below the minimum the
+# rotation isn't worth the interpolation blur, above the maximum the detected
+# angle is almost certainly a false positive (e.g. a diagonal fold or shadow).
+DESKEW_MIN_DEG = 0.3
+DESKEW_MAX_DEG = 15.0
+
+
+def _deskew(gray: np.ndarray) -> np.ndarray:
+    """
+    Straighten a tilted bill using the median angle of near-horizontal lines
+    found by a probabilistic Hough transform. Bills are full of horizontal
+    table rules and text baselines, so this is a strong signal; if fewer than
+    5 such lines agree, the image is left untouched.
+    """
+    edges = cv2.Canny(gray, 50, 150)
+    lines = cv2.HoughLinesP(
+        edges, 1, np.pi / 180, threshold=100,
+        minLineLength=gray.shape[1] // 4, maxLineGap=20,
+    )
+    if lines is None:
+        return gray
+
+    angles = [
+        np.degrees(np.arctan2(y2 - y1, x2 - x1))
+        for x1, y1, x2, y2 in lines[:, 0]
+        if abs(np.degrees(np.arctan2(y2 - y1, x2 - x1))) <= DESKEW_MAX_DEG
+    ]
+    if len(angles) < 5:
+        return gray
+
+    skew = float(np.median(angles))
+    if abs(skew) < DESKEW_MIN_DEG:
+        return gray
+
+    h, w = gray.shape
+    matrix = cv2.getRotationMatrix2D((w / 2, h / 2), skew, 1.0)
+    return cv2.warpAffine(
+        gray, matrix, (w, h),
+        flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE,
+    )
+
+
 def _preprocess(image: Image.Image) -> Image.Image:
     """
-    Upscale if small, convert to grayscale, denoise, then apply Otsu threshold.
-    Larger images give Tesseract more detail to work with.
+    Pipeline: upscale → grayscale → deskew → denoise → sharpen → binarise.
+
+    Binarisation is chosen per image: photos with shadows or glare (uneven
+    illumination) get adaptive Gaussian thresholding, while evenly-lit
+    scans/eBills keep global Otsu, which produces cleaner glyph edges.
     """
     img = np.array(image.convert("RGB"))
 
-    # Upscale if the shorter side is below 1000 px
     h, w = img.shape[:2]
-    if min(h, w) < 1000:
-        scale = 1000 / min(h, w)
+    if min(h, w) < TARGET_MIN_SIDE:
+        scale = TARGET_MIN_SIDE / min(h, w)
         img = cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
 
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    gray = _deskew(gray)
     denoised = cv2.fastNlMeansDenoising(gray, h=10)
-    _, thresh = cv2.threshold(denoised, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-    return Image.fromarray(thresh)
+
+    # Mild unsharp mask to recover stroke edges softened by denoising
+    blurred = cv2.GaussianBlur(denoised, (0, 0), 3)
+    sharpened = cv2.addWeighted(denoised, 1.5, blurred, -0.5, 0)
+
+    # Estimate illumination uniformity from the spread of local brightness
+    # averages; a high spread means shadows/glare across the page.
+    local_means = cv2.resize(cv2.blur(sharpened, (51, 51)), (32, 32))
+    uneven_lighting = float(local_means.std()) > 18
+
+    if uneven_lighting:
+        binary = cv2.adaptiveThreshold(
+            sharpened, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY, blockSize=31, C=15,
+        )
+    else:
+        _, binary = cv2.threshold(sharpened, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+    return Image.fromarray(binary)
 
 
 # ---------------------------------------------------------------------------
@@ -74,37 +141,23 @@ def _parse_state(text: str) -> str | None:
     return None
 
 
-def _parse_consumption(text: str) -> float | None:
-    """
-    Find monthly consumption in kWh.
-    Priority (highest → lowest):
-      1. Meter reading difference (Semasa − Dahulu) — most reliable, immune to
-         tariff-tier references like "600 kWh" appearing elsewhere in the bill.
-      2. Explicit TNB labels ("Jumlah Penggunaan Anda", "Total Units", etc.)
-      3. Fallback: any number immediately before or after "kWh".
-    Sanity range: 50–5000 kWh (typical Malaysian residential).
-    """
-    text_lower = text.lower()
-    # Collapse all whitespace/newlines into single spaces so that table cells
-    # split across lines (e.g. "467\nkWh") are matched as "467 kwh".
-    text_flat = re.sub(r'\s+', ' ', text_lower)
-
-    def _safe_float(s):
-        try:
-            return float(s.replace(",", ""))
-        except ValueError:
-            return None
-
-    def _extract_first(pattern, source):
-        for m in re.finditer(pattern, source):
-            val = _safe_float(m.group(1))
-            if val is not None and 50 <= val <= 5000:
-                return val
+def _safe_float(s: str) -> float | None:
+    try:
+        return float(s.replace(",", ""))
+    except ValueError:
         return None
 
-    # ── 1. Meter reading difference: Semasa − Dahulu ─────────────────────────
-    # TNB bills always show a meter table: Dahulu (previous) and Semasa (current).
-    # Computing the difference avoids any confusion with tariff-tier references.
+
+def _parse_meter_readings(text: str) -> tuple[float, float] | None:
+    """
+    Extract the (previous, current) meter readings from the bill's meter table.
+    TNB bills always show Dahulu (previous) and Semasa (current); the
+    difference is the month's consumption and is immune to tariff-tier
+    references like "600 kWh" appearing elsewhere on the page.
+    """
+    text_lower = text.lower()
+    text_flat = re.sub(r'\s+', ' ', text_lower)
+
     meter_patterns = [
         # "Dahulu  6,695  Semasa  7,162"  (flattened table row)
         r"dahulu[^\d]{0,20}([\d,]+)[^\d]{0,50}semasa[^\d]{0,20}([\d,]+)",
@@ -119,10 +172,38 @@ def _parse_consumption(text: str) -> float | None:
             if m:
                 prev = _safe_float(m.group(1))
                 curr = _safe_float(m.group(2))
-                if prev is not None and curr is not None:
-                    diff = curr - prev
-                    if 50 <= diff <= 5000:
-                        return diff
+                if prev is not None and curr is not None and 50 <= curr - prev <= 5000:
+                    return prev, curr
+    return None
+
+
+def _parse_consumption(text: str) -> float | None:
+    """
+    Find monthly consumption in kWh.
+    Priority (highest → lowest):
+      1. Meter reading difference (Semasa − Dahulu) — most reliable, immune to
+         tariff-tier references like "600 kWh" appearing elsewhere in the bill.
+      2. Explicit TNB labels ("Jumlah Penggunaan Anda", "Unit Used", etc.)
+      3. Fallback: any number immediately before or after "kWh".
+    Sanity range: 50–5000 kWh (typical Malaysian residential).
+    """
+    text_lower = text.lower()
+    # Collapse all whitespace/newlines into single spaces so that table cells
+    # split across lines (e.g. "467\nkWh") are matched as "467 kwh".
+    text_flat = re.sub(r'\s+', ' ', text_lower)
+
+    def _extract_first(pattern, source):
+        for m in re.finditer(pattern, source):
+            val = _safe_float(m.group(1))
+            if val is not None and 50 <= val <= 5000:
+                return val
+        return None
+
+    # ── 1. Meter reading difference: Semasa − Dahulu ─────────────────────────
+    readings = _parse_meter_readings(text)
+    if readings is not None:
+        prev, curr = readings
+        return curr - prev
 
     # ── 2. Explicit TNB bill labels ───────────────────────────────────────────
     labeled = [
@@ -140,6 +221,10 @@ def _parse_consumption(text: str) -> float | None:
         r"current\s+(?:month|consumption|use)[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
         # "Bil Semasa  467 kWh"
         r"bil\s+semasa[^\d]{0,50}(\d[\d,]*(?:\.\d+)?)\s*kwh",
+        # "Unit Used : 467" / "Penggunaan Unit : 467" (eBill layout)
+        r"(?:unit\s+used|penggunaan\s+unit)[^\d]{0,40}(\d[\d,]*(?:\.\d+)?)\s*(?:kwh)?",
+        # number with kWh unit shortly after a standalone "Semasa" header
+        r"semasa[^\d]{0,30}(\d[\d,]*(?:\.\d+)?)\s*kwh",
     ]
     for pat in labeled:
         for src in (text_flat, text_lower):
@@ -283,6 +368,17 @@ def _confidence(consumption: float | None, amount: float | None,
 # Public API
 # ---------------------------------------------------------------------------
 
+# --oem 3: default LSTM engine. --psm 6: single uniform block — works well on
+# the dense tabular layout of TNB bills. preserve_interword_spaces keeps table
+# column gaps so label→value patterns stay adjacent in the output.
+# (No character whitelist: tessedit_char_whitelist is ignored by the LSTM
+# engine, and the parsers rely on BM label words anyway.)
+TESS_CONFIG_PRIMARY  = "--oem 3 --psm 6 -c preserve_interword_spaces=1"
+# Fallback: automatic page segmentation, better when the bill fills only part
+# of the frame or psm 6 mangles the column order.
+TESS_CONFIG_FALLBACK = "--oem 3 --psm 3"
+
+
 def extract_bill_data(image: Image.Image) -> dict:
     """
     Run OCR on a TNB bill image and return all parsed fields.
@@ -294,18 +390,32 @@ def extract_bill_data(image: Image.Image) -> dict:
         consumption_kwh       float | None
         bill_amount_rm        float | None
         tariff_category       str | None
+        meter_previous_kwh    float | None
+        meter_current_kwh     float | None
         confidence_score      float   (0.0 – 1.0)
         raw_text              str
         success               bool    (True when at least consumption found)
         message               str
     """
     processed = _preprocess(image)
-    raw_text = pytesseract.image_to_string(processed, lang="eng")
+    raw_text = pytesseract.image_to_string(processed, lang="eng", config=TESS_CONFIG_PRIMARY)
 
     consumption = _parse_consumption(raw_text)
+
+    # Second pass with automatic layout analysis if the critical field is
+    # missing — some photos OCR better without the uniform-block assumption.
+    if consumption is None:
+        fallback_text = pytesseract.image_to_string(
+            processed, lang="eng", config=TESS_CONFIG_FALLBACK
+        )
+        if _parse_consumption(fallback_text) is not None:
+            raw_text = fallback_text
+            consumption = _parse_consumption(fallback_text)
+
     amount      = _parse_bill_amount(raw_text)
     tariff      = _parse_tariff_category(raw_text)
     state       = _parse_state(raw_text)
+    readings    = _parse_meter_readings(raw_text)
     confidence  = _confidence(consumption, amount, tariff, state)
 
     success = consumption is not None
@@ -327,12 +437,14 @@ def extract_bill_data(image: Image.Image) -> dict:
         )
 
     return {
-        "state":            state,
-        "consumption_kwh":  consumption,
-        "bill_amount_rm":   amount,
-        "tariff_category":  tariff,
-        "confidence_score": confidence,
-        "raw_text":         raw_text,
-        "success":          success,
-        "message":          message,
+        "state":              state,
+        "consumption_kwh":    consumption,
+        "bill_amount_rm":     amount,
+        "tariff_category":    tariff,
+        "meter_previous_kwh": readings[0] if readings else None,
+        "meter_current_kwh":  readings[1] if readings else None,
+        "confidence_score":   confidence,
+        "raw_text":           raw_text,
+        "success":            success,
+        "message":            message,
     }
