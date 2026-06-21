@@ -257,8 +257,8 @@ def _environmental_impact(styles: dict, data: dict) -> list:
         tbl,
         Spacer(1, 0.2 * cm),
         Paragraph(
-            "CO₂ offset calculated using Malaysia's grid emission factor of 0.585 kgCO₂/kWh "
-            "(Suruhanjaya Tenaga). Tree equivalence based on 22 kg CO₂ absorbed per tree per year.",
+            "CO₂ offset calculated using Malaysia's grid emission factor of 0.758 kgCO₂/kWh "
+            "(Suruhanjaya Tenaga, 2024 GEF). Tree equivalence based on 22 kg CO₂ absorbed per tree per year.",
             styles["small"],
         ),
     ]
