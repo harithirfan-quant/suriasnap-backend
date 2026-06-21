@@ -5,5 +5,6 @@ pytesseract
 Pillow
 opencv-python-headless
 pdf2image
+httpx
 python-dotenv
 reportlab

@@ -23,3 +23,16 @@ services:
       # Uvicorn log level (debug | info | warning | error)
       - key: LOG_LEVEL
         value: info
+
+      # ── WhatsApp Cloud API ──────────────────────────────────────────────
+      # sync:false = set the value in the Render dashboard, not in this file
+      # (keeps secrets out of git). The verify token is one you invent and
+      # also paste into Meta's webhook configuration.
+      - key: WHATSAPP_VERIFY_TOKEN
+        sync: false
+      - key: WHATSAPP_ACCESS_TOKEN
+        sync: false
+      - key: WHATSAPP_PHONE_NUMBER_ID
+        sync: false
+      - key: WHATSAPP_API_VERSION
+        value: v21.0

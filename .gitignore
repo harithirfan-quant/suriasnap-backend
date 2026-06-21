@@ -11,3 +11,9 @@ venv/
 dist/
 build/
 .DS_Store
+
+# WhatsApp MVP runtime data (ephemeral, never commit)
+*.db
+*.db-journal
+suriasnap.db
+media/
