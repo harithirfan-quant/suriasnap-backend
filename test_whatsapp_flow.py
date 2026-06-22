@@ -24,9 +24,14 @@ pil = types.ModuleType("PIL")
 pil_image = types.ModuleType("PIL.Image")
 pil_image.Image = object        # used as the type annotation Image.Image
 pil_image.open = lambda *a, **k: object()
+pil_image.BICUBIC = 3
 pil.Image = pil_image
+pil.ImageDraw = types.ModuleType("PIL.ImageDraw")
+pil.ImageFont = types.ModuleType("PIL.ImageFont")
 sys.modules["PIL"] = pil
 sys.modules["PIL.Image"] = pil_image
+sys.modules["PIL.ImageDraw"] = pil.ImageDraw
+sys.modules["PIL.ImageFont"] = pil.ImageFont
 sys.modules["httpx"] = types.ModuleType("httpx")  # never called in DRY_RUN
 
 # ── isolated env ─────────────────────────────────────────────────────────────
@@ -38,6 +43,7 @@ os.environ["MEDIA_DIR"] = os.path.join(_tmp, "media")
 from app.conversations import orchestrator, states, store
 from app.extraction import bill_extractor
 from app.reports import adapter as reports
+from app.reports import design_preview
 from app.whatsapp import client as wa
 from app.whatsapp.parser import InboundMessage
 
@@ -47,9 +53,11 @@ store.init_db()
 SENT: list[str] = []
 wa.send_text = lambda to, body: SENT.append(body)
 wa.send_document = lambda to, mid, fn, caption=None: SENT.append(f"[DOC {fn}] {caption}")
+wa.send_image = lambda to, mid, caption=None: SENT.append(f"[IMG] {caption}")
 wa.upload_media = lambda b, fn, mime: "FAKE_MEDIA_ID"
 wa.download_media = lambda mid: (b"fake-bytes", "image/jpeg")
 reports.generate_pdf_bytes = lambda *a, **k: b"%PDF-fake"
+design_preview.render_design_png = lambda *a, **k: b"PNG"
 
 _n = 0
 def send(phone, *, text=None, media=False):
@@ -99,6 +107,8 @@ check("A: summary shows usage", "467 kWh" in summary)
 check("A: summary shows system size", "kWp" in summary)
 check("A: summary shows payback", "Payback" in summary or "payback" in summary)
 check("A: PDF document sent", any(m.startswith("[DOC") for m in SENT))
+check("A: design image sent", any(m.startswith("[IMG]") for m in SENT))
+check("A: summary mentions design preview", "design preview" in summary.lower())
 
 # ── Run B: OCR misses usage → asks kWh, state, roof ──────────────────────────
 print("\n=== Run B: OCR misses usage ===")

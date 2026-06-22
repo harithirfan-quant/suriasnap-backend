@@ -8,12 +8,15 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm
 from reportlab.platypus import (
     HRFlowable,
+    Image as RLImage,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
     Table,
     TableStyle,
 )
+
+from app.reports import design_preview
 
 # ---------------------------------------------------------------------------
 # Brand colours
@@ -177,6 +180,33 @@ def _system_recommendation(styles: dict, data: dict) -> list:
         Paragraph("System Recommendation", styles["section"]),
         HRFlowable(width="100%", thickness=1, color=TEAL_LIGHT, spaceAfter=6),
         tbl,
+    ]
+
+
+def _design_preview(styles: dict, data: dict) -> list:
+    """Representative Arka-360-style rooftop layout image + honest note (best-effort)."""
+    try:
+        kwp = data["recommended_system_kwp"]
+        specific_yield = round(data["monthly_generation_kwh"] * 12 / kwp)
+        png = design_preview.render_design_png(
+            data["num_panels_400w"], data["roof_orientation"], kwp, specific_yield,
+        )
+        img = RLImage(io.BytesIO(png), width=16 * cm, height=10 * cm)
+    except Exception:
+        return []  # never let a rendering hiccup break the whole report
+
+    note = Paragraph(
+        "Representative layout — panel count and orientation reflect your inputs. "
+        "A SEDA-registered installer performs a site survey and produces the certified "
+        "engineering design (e.g. with Arka 360).",
+        styles["small"],
+    )
+    return [
+        Paragraph("Professional Design Preview", styles["section"]),
+        HRFlowable(width="100%", thickness=1, color=TEAL_LIGHT, spaceAfter=6),
+        img,
+        Spacer(1, 0.2 * cm),
+        note,
     ]
 
 
@@ -344,6 +374,7 @@ def generate_report(assessment_data: dict) -> bytes:
     story += _header(styles, inputs["state"])
     story += _user_details(styles, inputs)
     story += _system_recommendation(styles, assessment_data)
+    story += _design_preview(styles, assessment_data)
     story += _financial_summary(styles, assessment_data)
     story += _environmental_impact(styles, assessment_data)
     story += _solar_atap_explainer(styles)

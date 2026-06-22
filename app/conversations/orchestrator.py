@@ -20,6 +20,7 @@ from pathlib import Path
 from app.conversations import states, store
 from app.extraction import bill_extractor
 from app.reports import adapter as reports
+from app.reports import design_preview
 from app.solar import adapter as solar
 from app.whatsapp import client as wa
 from app.whatsapp.parser import InboundMessage
@@ -266,6 +267,25 @@ def _finish(phone: str, pending: dict) -> None:
 
     _send(phone, _format_summary(state, kwh, roof, orientation, result))
 
+    # Professional design preview image (representative Arka-360-style layout).
+    try:
+        specific_yield = round(
+            result["monthly_generation_kwh"] * 12 / result["recommended_system_kwp"]
+        )
+        png = design_preview.render_design_png(
+            result["num_panels_400w"], orientation,
+            result["recommended_system_kwp"], specific_yield,
+        )
+        img_id = wa.upload_media(png, "SuriaSnap-Design.png", "image/png")
+        wa.send_image(
+            phone, img_id,
+            caption="🛠️ Your professional design preview — a representative layout. "
+                    "A SEDA-registered installer finalises the certified design.",
+        )
+        store.log_message(phone, "out", "image", "design preview")
+    except Exception:
+        logger.exception("Design image delivery failed for %s", phone)
+
     # Optional PDF — reuse the existing report generator + free media upload.
     try:
         pdf = reports.generate_pdf_bytes(state, kwh, roof, orientation, result)
@@ -288,6 +308,7 @@ def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
     monthly = r["monthly_savings_rm"]
     annual = monthly * 12
     roi25 = r["roi_25_year_rm"]
+    sy = round(r["monthly_generation_kwh"] * 12 / r["recommended_system_kwp"])
     return (
         "☀️ *Your SuriaSnap Solar Estimate*\n\n"
         f"📍 {state}  ·  ⚡ {kwh:.0f} kWh/month\n"
@@ -306,6 +327,9 @@ def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
         "a year* you'll never get back. Solar panels run for 25+ years, so the "
         "sooner you switch, the more you keep. Your roof is already sitting in the "
         "sun — it might as well be paying you. ☀️\n\n"
+        "🛠️ *Professional design preview*\n"
+        f"{r['num_panels_400w']} × 400W · 15° tilt · {orientation}-facing · "
+        f"~{sy:,} kWh/kWp/yr — see the design image & full report below.\n\n"
         "👉 *Take the first step today* — browse trusted, SEDA-registered "
         f"installers near you:\n{SEDA_RPVSP_URL}\n\n"
         "_Based on TNB 2025/26 tariffs & SEDA NEM rates. Get a free site survey "
