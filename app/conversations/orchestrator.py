@@ -31,6 +31,9 @@ MEDIA_DIR = os.getenv("MEDIA_DIR", "media")
 CO2_PER_TREE_KG = 22
 DEFAULT_ROOF_HINT = 40  # m², a typical Malaysian terrace — suggested if unsure
 
+# SEDA's official registered PV service provider directory (verified 200 OK).
+SEDA_RPVSP_URL = "https://www.seda.gov.my/directory/registered-pv-service-provider-directory/"
+
 _GREETINGS = {
     "hi", "hello", "hey", "start", "menu", "hai", "helo",
     "salam", "assalamualaikum", "suria", "suriasnap",
@@ -282,18 +285,29 @@ def _finish(phone: str, pending: dict) -> None:
 def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
     co2 = r["annual_co2_offset_kg"]
     trees = int(co2 / CO2_PER_TREE_KG)
-    annual_savings = r["monthly_savings_rm"] * 12
+    monthly = r["monthly_savings_rm"]
+    annual = monthly * 12
+    roi25 = r["roi_25_year_rm"]
     return (
         "☀️ *Your SuriaSnap Solar Estimate*\n\n"
-        f"📍 State: *{state}*\n"
-        f"⚡ Monthly usage: *{kwh:.0f} kWh*\n"
-        f"🏠 Roof: *~{roof:.0f} m²* ({orientation}-facing, assumed)\n\n"
-        f"🔋 Recommended system: *{r['recommended_system_kwp']} kWp* "
-        f"({r['num_panels_400w']} × 400W panels)\n"
-        f"💰 Monthly savings: *RM {r['monthly_savings_rm']:,.0f}* "
-        f"(~RM {annual_savings:,.0f}/yr)\n"
-        f"⏳ Payback period: *~{r['payback_years']} years*\n"
-        f"🌳 Annual CO₂ cut: *{co2:,.0f} kg* (≈ {trees:,} trees)\n\n"
-        "_Estimates use TNB 2025/26 tariffs & SEDA NEM rates. Get a site survey "
-        "from a SEDA-registered installer for exact figures._"
+        f"📍 {state}  ·  ⚡ {kwh:.0f} kWh/month\n"
+        f"🏠 Roof ~{roof:.0f} m² ({orientation}-facing, assumed)\n\n"
+        "Here's what your roof could be earning you 👇\n\n"
+        f"🔋 *{r['recommended_system_kwp']} kWp* system — "
+        f"{r['num_panels_400w']} × 400W panels\n"
+        f"💰 *RM {monthly:,.0f}/month* saved — that's *RM {annual:,.0f}* a year "
+        "back in your pocket\n"
+        f"📈 *RM {roi25:,.0f}* net profit over 25 years\n"
+        f"⏳ *Payback:* ~{r['payback_years']} years — after that, it's "
+        "basically free electricity\n"
+        f"🌳 *{co2:,.0f} kg* less CO₂ a year — like planting *{trees:,} trees* 🌲\n\n"
+        "⏰ *The hidden cost of waiting:* every month you stay on the grid, "
+        f"~RM {monthly:,.0f} leaves your pocket for TNB — about *RM {annual:,.0f} "
+        "a year* you'll never get back. Solar panels run for 25+ years, so the "
+        "sooner you switch, the more you keep. Your roof is already sitting in the "
+        "sun — it might as well be paying you. ☀️\n\n"
+        "👉 *Take the first step today* — browse trusted, SEDA-registered "
+        f"installers near you:\n{SEDA_RPVSP_URL}\n\n"
+        "_Based on TNB 2025/26 tariffs & SEDA NEM rates. Get a free site survey "
+        "from an installer for exact figures._"
     )
