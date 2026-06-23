@@ -17,8 +17,8 @@ if tesseract_cmd:
 # Work at a bounded resolution so the free-tier CPU finishes OCR well within
 # the request timeout. Large phone photos are downscaled to MAX_LONG_SIDE;
 # small scans are upscaled so the shorter side reaches TARGET_MIN_SIDE.
-TARGET_MIN_SIDE = 1000
-MAX_LONG_SIDE   = 1400
+TARGET_MIN_SIDE = 1200
+MAX_LONG_SIDE   = 2000
 
 # Tilt correction is only applied within this band: below the minimum the
 # rotation isn't worth the interpolation blur, above the maximum the detected
@@ -381,12 +381,12 @@ def _confidence(consumption: float | None, amount: float | None,
 # Public API
 # ---------------------------------------------------------------------------
 
-# --oem 3: default LSTM engine. --psm 6: single uniform block — works well on
-# the dense tabular layout of TNB bills. preserve_interword_spaces keeps table
-# column gaps so label→value patterns stay adjacent in the output.
-# (No character whitelist: tessedit_char_whitelist is ignored by the LSTM
-# engine, and the parsers rely on BM label words anyway.)
-TESS_CONFIG_PRIMARY  = "--oem 3 --psm 6 -c preserve_interword_spaces=1"
+# --oem 3 LSTM, --psm 3 fully-automatic page segmentation: handles the bill's
+# multi-column layout (bill details on the left, payment channels on the right)
+# far better than the single-block assumption of psm 6, which jumbled the
+# meter table. preserve_interword_spaces keeps table columns adjacent for the
+# label→value parsers.
+TESS_CONFIG_PRIMARY  = "--oem 3 --psm 3 -c preserve_interword_spaces=1"
 
 
 def extract_bill_data(image: Image.Image) -> dict:
@@ -408,11 +408,15 @@ def extract_bill_data(image: Image.Image) -> dict:
         message               str
     """
     processed = _preprocess(image)
-    # Single Tesseract pass only — a second pass doubles latency, which the
-    # free-tier CPU can't afford within the request timeout. psm 6 suits the
-    # bill's dense tabular layout; users can correct or enter values manually
-    # if a scan misses a field.
-    raw_text = pytesseract.image_to_string(processed, lang="eng", config=TESS_CONFIG_PRIMARY)
+    # Single Tesseract pass with a hard time budget: a pathological image then
+    # fails gracefully ("enter manually") instead of exceeding the request
+    # timeout. psm 3 handles the bill's multi-column layout.
+    try:
+        raw_text = pytesseract.image_to_string(
+            processed, lang="eng", config=TESS_CONFIG_PRIMARY, timeout=90,
+        )
+    except Exception:
+        raw_text = ""  # timeout or OCR error → treat as unreadable, fall back
 
     consumption = _parse_consumption(raw_text)
     amount      = _parse_bill_amount(raw_text)
