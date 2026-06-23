@@ -15,10 +15,10 @@ services:
         value: /usr/bin/tesseract
 
       # Comma-separated list of allowed CORS origins (the browser is blocked
-      # unless the site's exact origin is listed here). Must match the live
-      # Vercel domain exactly — currently suriasnap-frontend.vercel.app.
+      # unless the site's exact origin is listed here). The live site is
+      # suriasnap.vercel.app; suriasnap-frontend.vercel.app is kept as an alias.
       - key: ALLOWED_ORIGINS
-        value: https://suriasnap-frontend.vercel.app,http://localhost:5173,http://localhost:3000
+        value: https://suriasnap.vercel.app,https://suriasnap-frontend.vercel.app,http://localhost:5173,http://localhost:3000
 
       # Uvicorn log level (debug | info | warning | error)
       - key: LOG_LEVEL
