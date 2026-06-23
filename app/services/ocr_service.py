@@ -17,8 +17,8 @@ if tesseract_cmd:
 # Work at a bounded resolution so the free-tier CPU finishes OCR well within
 # the request timeout. Large phone photos are downscaled to MAX_LONG_SIDE;
 # small scans are upscaled so the shorter side reaches TARGET_MIN_SIDE.
-TARGET_MIN_SIDE = 1100
-MAX_LONG_SIDE   = 1600
+TARGET_MIN_SIDE = 1000
+MAX_LONG_SIDE   = 1400
 
 # Tilt correction is only applied within this band: below the minimum the
 # rotation isn't worth the interpolation blur, above the maximum the detected
@@ -34,10 +34,16 @@ def _deskew(gray: np.ndarray) -> np.ndarray:
     table rules and text baselines, so this is a strong signal; if fewer than
     5 such lines agree, the image is left untouched.
     """
-    edges = cv2.Canny(gray, 50, 150)
+    H, W = gray.shape
+    # Detect the skew angle on a downscaled copy — Hough is the costliest step
+    # and angle estimation doesn't need full resolution.
+    ds = 900 / max(H, W)
+    small = cv2.resize(gray, (int(W * ds), int(H * ds))) if ds < 1 else gray
+
+    edges = cv2.Canny(small, 50, 150)
     lines = cv2.HoughLinesP(
-        edges, 1, np.pi / 180, threshold=100,
-        minLineLength=gray.shape[1] // 4, maxLineGap=20,
+        edges, 1, np.pi / 180, threshold=80,
+        minLineLength=small.shape[1] // 4, maxLineGap=20,
     )
     if lines is None:
         return gray
@@ -54,21 +60,21 @@ def _deskew(gray: np.ndarray) -> np.ndarray:
     if abs(skew) < DESKEW_MIN_DEG:
         return gray
 
-    h, w = gray.shape
-    matrix = cv2.getRotationMatrix2D((w / 2, h / 2), skew, 1.0)
+    matrix = cv2.getRotationMatrix2D((W / 2, H / 2), skew, 1.0)
     return cv2.warpAffine(
-        gray, matrix, (w, h),
+        gray, matrix, (W, H),
         flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE,
     )
 
 
 def _preprocess(image: Image.Image) -> Image.Image:
     """
-    Pipeline: upscale → grayscale → deskew → denoise → sharpen → binarise.
+    Pipeline: bound size → grayscale → deskew → despeckle → binarise.
 
-    Binarisation is chosen per image: photos with shadows or glare (uneven
-    illumination) get adaptive Gaussian thresholding, while evenly-lit
-    scans/eBills keep global Otsu, which produces cleaner glyph edges.
+    Kept deliberately cheap so OCR finishes within the request timeout on
+    Render's throttled free CPU. Binarisation is chosen per image: photos with
+    shadows or glare (uneven illumination) get adaptive Gaussian thresholding,
+    while evenly-lit scans/eBills keep global Otsu.
     """
     img = np.array(image.convert("RGB"))
 
@@ -87,26 +93,22 @@ def _preprocess(image: Image.Image) -> Image.Image:
 
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     gray = _deskew(gray)
-    # Light denoise (small search window) — fast on weak CPUs, still clears
-    # scan speckle without erasing thin glyph strokes.
-    denoised = cv2.fastNlMeansDenoising(gray, h=7, templateWindowSize=7, searchWindowSize=15)
-
-    # Mild unsharp mask to recover stroke edges softened by denoising
-    blurred = cv2.GaussianBlur(denoised, (0, 0), 3)
-    sharpened = cv2.addWeighted(denoised, 1.5, blurred, -0.5, 0)
+    # Fast median despeckle instead of non-local-means denoising — orders of
+    # magnitude cheaper on a weak CPU, still clears scan/JPEG speckle.
+    clean = cv2.medianBlur(gray, 3)
 
     # Estimate illumination uniformity from the spread of local brightness
     # averages; a high spread means shadows/glare across the page.
-    local_means = cv2.resize(cv2.blur(sharpened, (51, 51)), (32, 32))
+    local_means = cv2.resize(cv2.blur(clean, (51, 51)), (32, 32))
     uneven_lighting = float(local_means.std()) > 18
 
     if uneven_lighting:
         binary = cv2.adaptiveThreshold(
-            sharpened, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            clean, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
             cv2.THRESH_BINARY, blockSize=31, C=15,
         )
     else:
-        _, binary = cv2.threshold(sharpened, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        _, binary = cv2.threshold(clean, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
     return Image.fromarray(binary)
 
@@ -385,9 +387,6 @@ def _confidence(consumption: float | None, amount: float | None,
 # (No character whitelist: tessedit_char_whitelist is ignored by the LSTM
 # engine, and the parsers rely on BM label words anyway.)
 TESS_CONFIG_PRIMARY  = "--oem 3 --psm 6 -c preserve_interword_spaces=1"
-# Fallback: automatic page segmentation, better when the bill fills only part
-# of the frame or psm 6 mangles the column order.
-TESS_CONFIG_FALLBACK = "--oem 3 --psm 3"
 
 
 def extract_bill_data(image: Image.Image) -> dict:
@@ -409,20 +408,13 @@ def extract_bill_data(image: Image.Image) -> dict:
         message               str
     """
     processed = _preprocess(image)
+    # Single Tesseract pass only — a second pass doubles latency, which the
+    # free-tier CPU can't afford within the request timeout. psm 6 suits the
+    # bill's dense tabular layout; users can correct or enter values manually
+    # if a scan misses a field.
     raw_text = pytesseract.image_to_string(processed, lang="eng", config=TESS_CONFIG_PRIMARY)
 
     consumption = _parse_consumption(raw_text)
-
-    # Second pass with automatic layout analysis if the critical field is
-    # missing — some photos OCR better without the uniform-block assumption.
-    if consumption is None:
-        fallback_text = pytesseract.image_to_string(
-            processed, lang="eng", config=TESS_CONFIG_FALLBACK
-        )
-        if _parse_consumption(fallback_text) is not None:
-            raw_text = fallback_text
-            consumption = _parse_consumption(fallback_text)
-
     amount      = _parse_bill_amount(raw_text)
     tariff      = _parse_tariff_category(raw_text)
     state       = _parse_state(raw_text)
