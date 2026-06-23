@@ -14,10 +14,11 @@ if tesseract_cmd:
 # Preprocessing
 # ---------------------------------------------------------------------------
 
-# Shorter side is upscaled to this many pixels — roughly 150 DPI for an A4
-# bill, which is the sweet spot between Tesseract accuracy and OCR latency
-# on Render's free-tier CPU. Phone photos are usually larger and untouched.
-TARGET_MIN_SIDE = 1200
+# Work at a bounded resolution so the free-tier CPU finishes OCR well within
+# the request timeout. Large phone photos are downscaled to MAX_LONG_SIDE;
+# small scans are upscaled so the shorter side reaches TARGET_MIN_SIDE.
+TARGET_MIN_SIDE = 1100
+MAX_LONG_SIDE   = 1600
 
 # Tilt correction is only applied within this band: below the minimum the
 # rotation isn't worth the interpolation blur, above the maximum the detected
@@ -71,14 +72,24 @@ def _preprocess(image: Image.Image) -> Image.Image:
     """
     img = np.array(image.convert("RGB"))
 
+    # 1. Downscale large phone photos first — the single biggest lever for OCR
+    #    latency; a 12 MP photo would otherwise take minutes on the free CPU.
     h, w = img.shape[:2]
+    if max(h, w) > MAX_LONG_SIDE:
+        scale = MAX_LONG_SIDE / max(h, w)
+        img = cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_AREA)
+        h, w = img.shape[:2]
+
+    # 2. Upscale small scans / eBills so Tesseract has enough detail.
     if min(h, w) < TARGET_MIN_SIDE:
         scale = TARGET_MIN_SIDE / min(h, w)
         img = cv2.resize(img, (int(w * scale), int(h * scale)), interpolation=cv2.INTER_CUBIC)
 
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     gray = _deskew(gray)
-    denoised = cv2.fastNlMeansDenoising(gray, h=10)
+    # Light denoise (small search window) — fast on weak CPUs, still clears
+    # scan speckle without erasing thin glyph strokes.
+    denoised = cv2.fastNlMeansDenoising(gray, h=7, templateWindowSize=7, searchWindowSize=15)
 
     # Mild unsharp mask to recover stroke edges softened by denoising
     blurred = cv2.GaussianBlur(denoised, (0, 0), 3)
