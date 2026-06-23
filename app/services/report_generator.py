@@ -153,6 +153,51 @@ def _user_details(styles: dict, inputs: dict) -> list:
     ]
 
 
+def _savings_callout(styles: dict, data: dict) -> list:
+    """Eye-catching 'install now' savings banner placed right after the
+    property details — leads with the yearly saving and the cost of waiting."""
+    monthly = data["monthly_savings_rm"]
+    annual  = monthly * 12
+    roi25   = data["roi_25_year_rm"]
+    payback = data["payback_years"]
+
+    lead = ParagraphStyle("clLead", fontName="Helvetica-Bold", fontSize=11,
+                          textColor=TEAL_LIGHT, alignment=TA_CENTER, spaceAfter=6)
+    big  = ParagraphStyle("clBig", fontName="Helvetica-Bold", fontSize=24,
+                          textColor=WHITE, alignment=TA_CENTER, leading=28, spaceAfter=6)
+    sub  = ParagraphStyle("clSub", fontName="Helvetica", fontSize=10,
+                          textColor=WHITE, alignment=TA_CENTER, leading=14)
+
+    # One cell containing stacked paragraphs — avoids row-height overlap.
+    box = Table(
+        [[[
+            Paragraph("IF YOU GO SOLAR NOW, YOU COULD SAVE", lead),
+            Paragraph(f"RM {annual:,.0f} <font size=13>per year</font>", big),
+            Paragraph(
+                f"≈ <b>RM {roi25:,.0f}</b> net profit over 25 years — the system pays for "
+                f"itself in about <b>{payback} years</b>, then it is essentially free electricity.",
+                sub),
+        ]]],
+        colWidths=[17 * cm],
+        style=TableStyle([
+            ("BACKGROUND",    (0, 0), (-1, -1), TEAL),
+            ("TOPPADDING",    (0, 0), (-1, -1), 16),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 16),
+            ("LEFTPADDING",   (0, 0), (-1, -1), 18),
+            ("RIGHTPADDING",  (0, 0), (-1, -1), 18),
+            ("ROUNDEDCORNERS", [8]),
+        ]),
+    )
+    why = Paragraph(
+        f"<b>Why?</b> Right now about <b>RM {monthly:,.0f}/month</b> leaves your pocket for TNB. "
+        "Solar offsets your usage first and exports the surplus for NEM credits, so most of that "
+        "money stays with you instead. Panels run for 25+ years — every month you wait is a saving "
+        "you don't get back.",
+        styles["small"],
+    )
+    return [box, Spacer(1, 0.15 * cm), why, Spacer(1, 0.35 * cm)]
+
+
 def _system_recommendation(styles: dict, data: dict) -> list:
     """KPI tiles: system size and panel count."""
     kpi_data = [
@@ -211,40 +256,47 @@ def _design_preview(styles: dict, data: dict) -> list:
 
 
 def _financial_summary(styles: dict, data: dict) -> list:
-    """Table with monthly/annual savings, payback, 25-year ROI."""
-    header_style = ParagraphStyle(
-        "TH", fontName="Helvetica-Bold", fontSize=10,
-        textColor=WHITE, alignment=TA_CENTER,
-    )
-    cell_style = ParagraphStyle(
-        "TD", fontName="Helvetica", fontSize=10,
-        textColor=DARK, alignment=TA_LEFT,
-    )
-    val_style = ParagraphStyle(
-        "TDV", fontName="Helvetica-Bold", fontSize=10,
-        textColor=TEAL, alignment=TA_RIGHT,
+    """Two hero numbers (annual savings + 25-year net profit) over a clean
+    detail table — leads with impact, then backs it up with the breakdown."""
+    monthly = data["monthly_savings_rm"]
+    annual  = monthly * 12
+    cost    = data["system_cost_rm"]
+    payback = data["payback_years"]
+    roi25   = data["roi_25_year_rm"]
+    total25 = roi25 + cost   # gross lifetime savings (net profit + the cost it repaid)
+
+    # --- hero tiles ---
+    tile_label = ParagraphStyle("fH", fontName="Helvetica", fontSize=9,
+                                textColor=TEAL_LIGHT, alignment=TA_CENTER, spaceAfter=3)
+    tile_val   = ParagraphStyle("fV", fontName="Helvetica-Bold", fontSize=19,
+                                textColor=WHITE, alignment=TA_CENTER)
+    hero = Table(
+        [
+            [Paragraph("ANNUAL SAVINGS", tile_label), Paragraph("25-YEAR NET PROFIT", tile_label)],
+            [Paragraph(f"RM {annual:,.0f}", tile_val), Paragraph(f"RM {roi25:,.0f}", tile_val)],
+        ],
+        colWidths=[8.5 * cm, 8.5 * cm],
+        style=TableStyle([
+            ("BACKGROUND",    (0, 0), (-1, -1), TEAL),
+            ("GRID",          (0, 0), (-1, -1), 1.2, WHITE),
+            ("TOPPADDING",    (0, 0), (-1, -1), 11),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 11),
+            ("ROUNDEDCORNERS", [6]),
+        ]),
     )
 
-    rows = [
-        [Paragraph("Financial Metric", header_style), Paragraph("Value", header_style)],
-        ["Monthly Savings",       f"RM {data['monthly_savings_rm']:,.2f}"],
-        ["Annual Savings",        f"RM {data['monthly_savings_rm'] * 12:,.2f}"],
-        ["System Cost",           f"RM {data['system_cost_rm']:,.2f}"],
-        ["Payback Period",        f"{data['payback_years']} years"],
-        ["25-Year ROI",           f"RM {data['roi_25_year_rm']:,.2f}"],
+    # --- detail breakdown ---
+    cell = ParagraphStyle("dC", fontName="Helvetica", fontSize=10, textColor=DARK)
+    val  = ParagraphStyle("dV", fontName="Helvetica-Bold", fontSize=10,
+                          textColor=TEAL, alignment=TA_RIGHT)
+    detail_rows = [
+        [Paragraph("Monthly savings", cell),            Paragraph(f"RM {monthly:,.2f}", val)],
+        [Paragraph("Estimated system cost", cell),      Paragraph(f"RM {cost:,.0f}", val)],
+        [Paragraph("Payback period", cell),             Paragraph(f"{payback} years", val)],
+        [Paragraph("Total saved over 25 years", cell),  Paragraph(f"RM {total25:,.0f}", val)],
     ]
-
-    styled_rows = [rows[0]]
-    for label, value in rows[1:]:
-        styled_rows.append([
-            Paragraph(label, cell_style),
-            Paragraph(value, val_style),
-        ])
-
-    tbl = Table(styled_rows, colWidths=[10 * cm, 7 * cm])
-    tbl.setStyle(TableStyle([
-        ("BACKGROUND",    (0, 0), (-1, 0),  TEAL),
-        ("ROWBACKGROUNDS",(0, 1), (-1, -1), [WHITE, TEAL_BG]),
+    detail = Table(detail_rows, colWidths=[10 * cm, 7 * cm], style=TableStyle([
+        ("ROWBACKGROUNDS",(0, 0), (-1, -1), [WHITE, TEAL_BG]),
         ("TOPPADDING",    (0, 0), (-1, -1), 7),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
         ("LEFTPADDING",   (0, 0), (-1, -1), 10),
@@ -255,7 +307,9 @@ def _financial_summary(styles: dict, data: dict) -> list:
     return [
         Paragraph("Financial Summary", styles["section"]),
         HRFlowable(width="100%", thickness=1, color=TEAL_LIGHT, spaceAfter=6),
-        tbl,
+        hero,
+        Spacer(1, 0.25 * cm),
+        detail,
     ]
 
 
@@ -264,17 +318,18 @@ def _environmental_impact(styles: dict, data: dict) -> list:
     annual_co2 = data["annual_co2_offset_kg"]
     trees       = int(annual_co2 / CO2_PER_TREE_KG)
 
+    # Cells are Paragraphs so the CO<sub>2</sub> subscript renders properly —
+    # ReportLab's Helvetica has no ₂ glyph and would draw a tofu box otherwise.
+    lbl = ParagraphStyle("envL", fontName="Helvetica-Bold", fontSize=10, textColor=DARK)
+    v   = ParagraphStyle("envV", fontName="Helvetica", fontSize=10, textColor=TEAL)
     rows = [
-        ["Annual CO₂ Offset",     f"{annual_co2:,.1f} kg CO₂"],
-        ["Tree Equivalent",       f"≈ {trees:,} trees planted per year"],
+        [Paragraph("Annual CO<sub>2</sub> Offset", lbl),
+         Paragraph(f"{annual_co2:,.1f} kg CO<sub>2</sub>", v)],
+        [Paragraph("Tree Equivalent", lbl),
+         Paragraph(f"≈ {trees:,} trees planted per year", v)],
     ]
     tbl = Table(rows, colWidths=[7 * cm, 10 * cm])
     tbl.setStyle(TableStyle([
-        ("FONTNAME",      (0, 0), (0, -1), "Helvetica-Bold"),
-        ("FONTNAME",      (1, 0), (1, -1), "Helvetica"),
-        ("FONTSIZE",      (0, 0), (-1, -1), 10),
-        ("TEXTCOLOR",     (0, 0), (0, -1), DARK),
-        ("TEXTCOLOR",     (1, 0), (1, -1), TEAL),
         ("ROWBACKGROUNDS",(0, 0), (-1, -1), [TEAL_BG, WHITE]),
         ("TOPPADDING",    (0, 0), (-1, -1), 7),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
@@ -287,8 +342,9 @@ def _environmental_impact(styles: dict, data: dict) -> list:
         tbl,
         Spacer(1, 0.2 * cm),
         Paragraph(
-            "CO₂ offset calculated using Malaysia's grid emission factor of 0.758 kgCO₂/kWh "
-            "(Suruhanjaya Tenaga, 2024 GEF). Tree equivalence based on 22 kg CO₂ absorbed per tree per year.",
+            "CO<sub>2</sub> offset calculated using Malaysia's grid emission factor of "
+            "0.758 kgCO<sub>2</sub>/kWh (Suruhanjaya Tenaga, 2024 GEF). Tree equivalence "
+            "based on 22 kg CO<sub>2</sub> absorbed per tree per year.",
             styles["small"],
         ),
     ]
@@ -373,6 +429,7 @@ def generate_report(assessment_data: dict) -> bytes:
     story = []
     story += _header(styles, inputs["state"])
     story += _user_details(styles, inputs)
+    story += _savings_callout(styles, assessment_data)
     story += _system_recommendation(styles, assessment_data)
     story += _design_preview(styles, assessment_data)
     story += _financial_summary(styles, assessment_data)
