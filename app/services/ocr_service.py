@@ -393,7 +393,7 @@ TESS_CONFIG_PRIMARY  = "--oem 3 --psm 6 -c preserve_interword_spaces=1"
 
 
 # ── Claude Vision (primary; falls back to Tesseract if unset or on error) ────
-CLAUDE_MODEL    = "claude-haiku-4-5"   # fast + cheap vision, ~1-2 sen per bill
+CLAUDE_MODEL    = "claude-haiku-4-5-20251001"   # fast + cheap vision, ~1-2 sen/bill
 CLAUDE_MAX_EDGE = 1568                 # Claude reads best ≤1568px; caps token cost
 
 _CLAUDE_PROMPT = (
