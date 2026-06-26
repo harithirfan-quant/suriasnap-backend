@@ -14,11 +14,12 @@ if tesseract_cmd:
 # Preprocessing
 # ---------------------------------------------------------------------------
 
-# Work at a bounded resolution so the free-tier CPU finishes OCR well within
-# the request timeout. Large phone photos are downscaled to MAX_LONG_SIDE;
-# small scans are upscaled so the shorter side reaches TARGET_MIN_SIDE.
-TARGET_MIN_SIDE = 1200
-MAX_LONG_SIDE   = 2000
+# Bill text is small, especially on myTNB screenshots. Upscale the short side
+# generously — Tesseract is far more reliable on big glyphs, and this is what
+# made real bills (and WhatsApp's JPEG-compressed versions) read consistently
+# as 467 instead of flipping to 316/600. Cap the long side to bound OCR time.
+TARGET_MIN_SIDE = 2600
+MAX_LONG_SIDE   = 3400
 
 # Tilt correction is only applied within this band: below the minimum the
 # rotation isn't worth the interpolation blur, above the maximum the detected
@@ -93,23 +94,13 @@ def _preprocess(image: Image.Image) -> Image.Image:
 
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     gray = _deskew(gray)
-    # Fast median despeckle instead of non-local-means denoising — orders of
-    # magnitude cheaper on a weak CPU, still clears scan/JPEG speckle.
-    clean = cv2.medianBlur(gray, 3)
 
-    # Estimate illumination uniformity from the spread of local brightness
-    # averages; a high spread means shadows/glare across the page.
-    local_means = cv2.resize(cv2.blur(clean, (51, 51)), (32, 32))
-    uneven_lighting = float(local_means.std()) > 18
-
-    if uneven_lighting:
-        binary = cv2.adaptiveThreshold(
-            clean, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY, blockSize=31, C=15,
-        )
-    else:
-        _, binary = cv2.threshold(clean, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-
+    # Global Otsu threshold, no denoise. Both adaptive thresholding and median/
+    # bilateral blur fragmented or merged the small digits on coloured-row bill
+    # screenshots — especially after WhatsApp's JPEG compression — turning 467
+    # into 316/600/None. Plain Otsu on the raw grayscale reads them reliably
+    # (and is the fastest option, which also helps the free-tier timeout).
+    _, binary = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
     return Image.fromarray(binary)
 
 
@@ -302,7 +293,8 @@ def _parse_bill_amount(text: str) -> float | None:
     labelled_patterns = [
         # "Jumlah Yang Perlu Dibayar / Amount Due  RM 185.50"
         r"(?:jumlah\s+(?:yang\s+)?(?:perlu\s+)?dibayar|amount\s+(?:due|payable))[^\d]{0,50}(?:rm\s*)?(\d[\d,]*\.\d{2})",
-        r"(?:jumlah|amount\s+due)[^\d]{0,40}(?:rm\s*)?(\d[\d,]*\.\d{2})",
+        # NOTE: no bare "jumlah …" pattern — it matched "Jumlah Penggunaan Anda
+        # … 467.00" (the usage row) and returned the kWh value as the amount.
         # "TOTAL AMOUNT  RM 185.50" / "TOTAL  185.50"
         r"total\s+(?:amount\s+)?(?:due\s+)?[^\d]{0,30}(?:rm\s*)?(\d[\d,]*\.\d{2})",
         # "Amaun Dibayar / Amount Paid"
@@ -386,12 +378,12 @@ def _confidence(consumption: float | None, amount: float | None,
 # Public API
 # ---------------------------------------------------------------------------
 
-# --oem 3 LSTM, --psm 3 fully-automatic page segmentation: handles the bill's
-# multi-column layout (bill details on the left, payment channels on the right)
-# far better than the single-block assumption of psm 6, which jumbled the
-# meter table. preserve_interword_spaces keeps table columns adjacent for the
-# label→value parsers.
-TESS_CONFIG_PRIMARY  = "--oem 3 --psm 3 -c preserve_interword_spaces=1"
+# --oem 3 LSTM, --psm 6 (assume a uniform block of text). With the upscaled
+# image plus the 'Penggunaan Anda' anchor, psm 6 reads the usage reliably AND
+# is faster than psm 3's full page-segmentation — which was flakier here
+# (e.g. grabbing 316 from the AFA line). preserve_interword_spaces keeps table
+# columns adjacent for the label→value parsers.
+TESS_CONFIG_PRIMARY  = "--oem 3 --psm 6 -c preserve_interword_spaces=1"
 
 
 def extract_bill_data(image: Image.Image) -> dict:
