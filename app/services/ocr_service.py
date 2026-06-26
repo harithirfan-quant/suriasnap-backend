@@ -18,8 +18,8 @@ if tesseract_cmd:
 # generously — Tesseract is far more reliable on big glyphs, and this is what
 # made real bills (and WhatsApp's JPEG-compressed versions) read consistently
 # as 467 instead of flipping to 316/600. Cap the long side to bound OCR time.
-TARGET_MIN_SIDE = 2600
-MAX_LONG_SIDE   = 3400
+TARGET_MIN_SIDE = 2000
+MAX_LONG_SIDE   = 3000
 
 # Tilt correction is only applied within this band: below the minimum the
 # rotation isn't worth the interpolation blur, above the maximum the detected
@@ -247,7 +247,7 @@ def _parse_consumption(text: str) -> float | None:
     # unless nothing else is available.
     candidates = []
     fallback_patterns = [
-        r"(\d[\d,]*(?:\.\d+)?)\s*kwh",   # number before kWh
+        r"(\d[\d,]*(?:\.\d+)?)\s*kwh(?!\s*,)",   # number before kWh (not a rate line like \"316kWh,\")
         r"kwh\W{0,20}(\d[\d,]*(?:\.\d+)?)\b",  # kWh header then number
     ]
     for pat in fallback_patterns:
@@ -410,7 +410,7 @@ def extract_bill_data(image: Image.Image) -> dict:
     # timeout. psm 3 handles the bill's multi-column layout.
     try:
         raw_text = pytesseract.image_to_string(
-            processed, lang="eng", config=TESS_CONFIG_PRIMARY, timeout=90,
+            processed, lang="eng", config=TESS_CONFIG_PRIMARY, timeout=105,
         )
     except Exception:
         raw_text = ""  # timeout or OCR error → treat as unreadable, fall back
