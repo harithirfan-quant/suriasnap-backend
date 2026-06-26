@@ -6,5 +6,6 @@ Pillow
 opencv-python-headless
 pdf2image
 httpx
+anthropic
 python-dotenv
 reportlab

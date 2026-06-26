@@ -1,9 +1,15 @@
+import base64
+import io
+import json
+import logging
 import os
 import re
 import cv2
 import numpy as np
 import pytesseract
 from PIL import Image
+
+logger = logging.getLogger("suriasnap.ocr")
 
 tesseract_cmd = os.getenv("TESSERACT_CMD")
 if tesseract_cmd:
@@ -386,23 +392,101 @@ def _confidence(consumption: float | None, amount: float | None,
 TESS_CONFIG_PRIMARY  = "--oem 3 --psm 6 -c preserve_interword_spaces=1"
 
 
+# ── Claude Vision (primary; falls back to Tesseract if unset or on error) ────
+CLAUDE_MODEL    = "claude-haiku-4-5"   # fast + cheap vision, ~1-2 sen per bill
+CLAUDE_MAX_EDGE = 1568                 # Claude reads best ≤1568px; caps token cost
+
+_CLAUDE_PROMPT = (
+    "You are a precise data extractor for Malaysian TNB (Tenaga Nasional) "
+    "electricity bills. From the bill image, return ONLY a JSON object (no prose) "
+    "with these keys: "
+    '{"state": <Malaysian state name e.g. "Kedah"/"Selangor"/"Penang", or null>, '
+    '"monthly_kwh": <the month\'s total electricity usage in kWh as a number — '
+    'the value next to "Jumlah Penggunaan Anda" or the meter "Penggunaan" column, '
+    'or null>, '
+    '"bill_amount_rm": <total amount payable in RM as a number, or null>, '
+    '"tariff_category": <e.g. "Domestik", or null>, '
+    '"confidence": <0.0 to 1.0>}. '
+    "Use null if a value is not clearly visible; do NOT guess or hallucinate. "
+    "monthly_kwh is the month's usage (typically 100-2000), never a tariff "
+    "threshold like 300/600/900 from fine print. Return only the JSON."
+)
+
+
+def _extract_with_claude(image: Image.Image) -> dict:
+    """Extract bill fields with Claude Vision. Raises on any API/parse error so
+    the caller can fall back to Tesseract."""
+    import anthropic
+
+    rgb = image.convert("RGB")
+    if max(rgb.size) > CLAUDE_MAX_EDGE:
+        s = CLAUDE_MAX_EDGE / max(rgb.size)
+        rgb = rgb.resize((int(rgb.width * s), int(rgb.height * s)))
+    buf = io.BytesIO()
+    rgb.save(buf, format="PNG")
+    b64 = base64.standard_b64encode(buf.getvalue()).decode()
+
+    client = anthropic.Anthropic()  # reads ANTHROPIC_API_KEY from env
+    resp = client.messages.create(
+        model=CLAUDE_MODEL,
+        max_tokens=400,
+        system=_CLAUDE_PROMPT,
+        messages=[{"role": "user", "content": [
+            {"type": "image", "source": {"type": "base64",
+             "media_type": "image/png", "data": b64}},
+            {"type": "text", "text": "Extract the fields as JSON."},
+        ]}],
+    )
+    text = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
+    data = json.loads(text[text.find("{"): text.rfind("}") + 1])
+
+    kwh = data.get("monthly_kwh")
+    consumption = float(kwh) if isinstance(kwh, (int, float)) and 50 <= kwh <= 5000 else None
+    amt = data.get("bill_amount_rm")
+    amount = float(amt) if isinstance(amt, (int, float)) and 1 <= amt <= 100_000 else None
+    state = (data.get("state") or None)
+    tariff = (data.get("tariff_category") or None)
+    conf = data.get("confidence")
+    confidence = float(conf) if isinstance(conf, (int, float)) else (0.95 if consumption else 0.0)
+
+    if consumption is not None:
+        found = [f for f, v in [("consumption", consumption), ("bill amount", amount),
+                                ("tariff", tariff), ("state", state)] if v is not None]
+        message = f"Extracted via Claude Vision: {', '.join(found)}."
+    else:
+        message = "Claude could not read monthly consumption from the bill."
+
+    return {
+        "state": state, "consumption_kwh": consumption, "bill_amount_rm": amount,
+        "tariff_category": tariff, "meter_previous_kwh": None, "meter_current_kwh": None,
+        "confidence_score": round(confidence, 2), "raw_text": text,
+        "success": consumption is not None, "message": message,
+    }
+
+
 def extract_bill_data(image: Image.Image) -> dict:
     """
-    Run OCR on a TNB bill image and return all parsed fields.
+    Extract TNB bill fields. Uses Claude Vision when ANTHROPIC_API_KEY is set
+    (fast + accurate), falling back to local Tesseract OCR otherwise or on any
+    Claude error. Returns the dict documented on _extract_with_tesseract.
+    """
+    if os.getenv("ANTHROPIC_API_KEY"):
+        try:
+            result = _extract_with_claude(image)
+            if result["consumption_kwh"] is not None:
+                return result
+            logger.info("Claude returned no usage; falling back to Tesseract")
+        except Exception:
+            logger.exception("Claude Vision failed; falling back to Tesseract")
+    return _extract_with_tesseract(image)
 
-    Returns
-    -------
-    dict with keys:
-        state                 str | None
-        consumption_kwh       float | None
-        bill_amount_rm        float | None
-        tariff_category       str | None
-        meter_previous_kwh    float | None
-        meter_current_kwh     float | None
-        confidence_score      float   (0.0 – 1.0)
-        raw_text              str
-        success               bool    (True when at least consumption found)
-        message               str
+
+def _extract_with_tesseract(image: Image.Image) -> dict:
+    """
+    Local Tesseract OCR fallback. Returns a dict with keys:
+        state, consumption_kwh, bill_amount_rm, tariff_category,
+        meter_previous_kwh, meter_current_kwh, confidence_score,
+        raw_text, success, message.
     """
     processed = _preprocess(image)
     # Single Tesseract pass with a hard time budget: a pathological image then
