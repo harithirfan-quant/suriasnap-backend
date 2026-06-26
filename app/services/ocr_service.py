@@ -220,6 +220,11 @@ def _parse_consumption(text: str) -> float | None:
 
     # ── 2. Explicit TNB bill labels ───────────────────────────────────────────
     labeled = [
+        # "Penggunaan Anda … 467.00" — most reliable anchor: on real bills OCR
+        # frequently mangles "Jumlah" (→ "Real"/"dumiah") and "kWh" (→ "ww"),
+        # but "Penggunaan Anda" reads cleanly and is immediately followed by the
+        # monthly total. Capture the first number after it.
+        r"penggunaan\s+anda[^\d]{0,30}(\d[\d,]*(?:\.\d+)?)",
         # "Jumlah Penggunaan Anda  kWh  467.00"  (table: label | unit | value)
         r"jumlah\s+penggunaan\s+anda\s+kwh\s+(\d[\d,]*(?:\.\d+)?)",
         # "Jumlah Penggunaan Anda  467 kWh"
