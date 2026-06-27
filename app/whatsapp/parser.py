@@ -100,5 +100,17 @@ def _parse_single(m: dict, names: dict) -> InboundMessage | None:
             **base,
         )
 
+    if mtype == "interactive":
+        # User tapped a list row or reply button — surface the selected id as
+        # `text` so the orchestrator can match it (e.g. an FAQ row id).
+        inter = m.get("interactive", {})
+        reply = inter.get("list_reply") or inter.get("button_reply") or {}
+        return InboundMessage(
+            msg_type="interactive",
+            text=reply.get("id"),
+            extras={"title": reply.get("title")},
+            **base,
+        )
+
     # Stickers, audio, location, button replies, etc. — handled generically
     return InboundMessage(msg_type="other", **base)

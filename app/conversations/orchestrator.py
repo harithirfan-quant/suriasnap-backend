@@ -17,10 +17,11 @@ import re
 import uuid
 from pathlib import Path
 
-from app.conversations import states, store
+from app.conversations import faq, states, store
 from app.extraction import bill_extractor
 from app.reports import adapter as reports
 from app.reports import design_preview
+from app.services import assistant
 from app.solar import adapter as solar
 from app.whatsapp import client as wa
 from app.whatsapp.parser import InboundMessage
@@ -36,15 +37,22 @@ DEFAULT_ROOF_HINT = 40  # m², a typical Malaysian terrace — suggested if unsu
 SEDA_RPVSP_URL = "https://www.seda.gov.my/directory/registered-pv-service-provider-directory/"
 
 _GREETINGS = {
-    "hi", "hello", "hey", "start", "menu", "hai", "helo",
+    "hi", "hello", "hey", "start", "hai", "helo",
     "salam", "assalamualaikum", "suria", "suriasnap",
+}
+
+# Words that open the tappable FAQ menu (free — no Claude call).
+_FAQ_COMMANDS = {
+    "menu", "faq", "help", "question", "questions", "tanya", "soalan", "info",
 }
 
 INTRO = (
     "👋 Hi! I'm *SuriaSnap*.\n\n"
     "Send me a photo or PDF of your latest *TNB bill* and I'll estimate your "
-    "rooftop solar size, monthly savings, payback period, and CO₂ reduction — "
-    "free, in under a minute. 🌞"
+    "rooftop solar size, monthly savings, payback period, and CO2 reduction — "
+    "free, in under a minute.\n\n"
+    "You can also *ask me anything* about solar, NEM, SEDA or TNB — or type "
+    "*menu* for common questions."
 )
 
 
@@ -57,6 +65,25 @@ def _send(phone: str, body: str) -> None:
     except Exception:
         logger.exception("Failed to send text to %s", phone)
     store.log_message(phone, "out", "text", body)
+
+
+def _send_faq_menu(phone: str) -> None:
+    """Send the tappable FAQ list (free). Falls back to plain text if the
+    interactive message can't be sent."""
+    try:
+        wa.send_list(
+            phone,
+            body="Tap a question below for an instant answer — or just type your "
+                 "own question about solar. 👇",
+            button="Common questions",
+            rows=faq.faq_rows(),
+            section_title="SuriaSnap FAQ",
+        )
+    except Exception:
+        logger.exception("FAQ list failed for %s; sending plain text", phone)
+        lines = "\n".join(f"• {f['title']}" for f in faq.FAQ)
+        _send(phone, "Common questions — just ask me any of these:\n" + lines)
+    store.log_message(phone, "out", "interactive", "faq menu")
 
 
 def _is_greeting(text: str) -> bool:
@@ -127,6 +154,21 @@ def _route(phone: str, msg: InboundMessage) -> None:
         _send(phone, INTRO)
         return
 
+    # FAQ menu command — free, no Claude call.
+    if msg.msg_type == "text" and text.lower() in _FAQ_COMMANDS:
+        _send_faq_menu(phone)
+        return
+
+    # User tapped an FAQ row → canned answer (free).
+    if msg.msg_type == "interactive":
+        answer = faq.faq_answer(msg.text)
+        if answer:
+            _send(phone, answer)
+            _send(phone, "Type *menu* for more, or send your *TNB bill* for a free estimate.")
+        else:
+            _send_faq_menu(phone)
+        return
+
     # A bill image/PDF can arrive at any point and kicks off processing.
     if msg.msg_type in ("image", "document"):
         _handle_bill(phone, msg)
@@ -177,12 +219,11 @@ def _handle_text(phone: str, state: str, text: str) -> None:
             )
         return
 
-    # Not waiting on anything specific.
-    if state == states.WAITING_FOR_BILL:
-        _send(phone, "Please send a photo or PDF of your *TNB bill* to continue 📄")
-    else:
-        store.set_state(phone, states.WAITING_FOR_BILL)
-        _send(phone, INTRO)
+    # Not waiting on a specific input → treat it as a question and let the
+    # assistant answer (solar / SuriaSnap topics only). Cheap Claude Haiku call;
+    # off-topic messages are politely declined by the system prompt.
+    store.set_state(phone, states.WAITING_FOR_BILL)
+    _send(phone, assistant.answer_question(text))
 
 
 def _handle_bill(phone: str, msg: InboundMessage) -> None:

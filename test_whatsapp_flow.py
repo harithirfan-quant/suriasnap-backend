@@ -44,6 +44,7 @@ from app.conversations import orchestrator, states, store
 from app.extraction import bill_extractor
 from app.reports import adapter as reports
 from app.reports import design_preview
+from app.services import assistant
 from app.whatsapp import client as wa
 from app.whatsapp.parser import InboundMessage
 
@@ -54,21 +55,23 @@ SENT: list[str] = []
 wa.send_text = lambda to, body: SENT.append(body)
 wa.send_document = lambda to, mid, fn, caption=None: SENT.append(f"[DOC {fn}] {caption}")
 wa.send_image = lambda to, mid, caption=None: SENT.append(f"[IMG] {caption}")
+wa.send_list = lambda to, body, button, rows, section_title="", header=None: SENT.append(f"[LIST {len(rows)} rows]")
 wa.upload_media = lambda b, fn, mime: "FAKE_MEDIA_ID"
 wa.download_media = lambda mid: (b"fake-bytes", "image/jpeg")
 reports.generate_pdf_bytes = lambda *a, **k: b"%PDF-fake"
 design_preview.render_design_png = lambda *a, **k: b"PNG"
+assistant.answer_question = lambda q: f"[ANSWER:{q}]"   # no real Claude call in tests
 
 _n = 0
-def send(phone, *, text=None, media=False):
+def send(phone, *, text=None, media=False, interactive_id=None):
     """Simulate one inbound WhatsApp message hitting the webhook."""
     global _n
     _n += 1
     msg = InboundMessage(
         from_number=phone,
         wa_message_id=f"wamid-{_n}",
-        msg_type="image" if media else "text",
-        text=text,
+        msg_type="interactive" if interactive_id else ("image" if media else "text"),
+        text=interactive_id or text,
         media_id="MID" if media else None,
         media_mime="image/jpeg" if media else None,
         profile_name="Test User",
@@ -142,6 +145,31 @@ check("B: roof given → DONE", state_of(B) == states.DONE)
 summaryB = next((m for m in SENT if "Solar Estimate" in m), "")
 check("B: summary shows Penang", "Penang" in summaryB)
 check("B: summary shows 450 kWh", "450 kWh" in summaryB)
+
+# ── Run C: FAQ menu + tap + free-text assistant ──────────────────────────────
+print("\n=== Run C: FAQ + assistant ===")
+SENT.clear()
+C = "60123000003"
+send(C, text="hi")
+check("C: intro mentions menu", any("menu" in m.lower() for m in SENT))
+
+SENT.clear()
+send(C, text="menu")
+check("C: 'menu' sends the FAQ list", any(m.startswith("[LIST") for m in SENT))
+
+SENT.clear()
+send(C, interactive_id="faq_nem")
+check("C: tapping an FAQ row returns the canned answer",
+      any("Net Energy Metering" in m for m in SENT))
+
+SENT.clear()
+send(C, text="how do solar panels work?")
+check("C: free-text question routes to the assistant",
+      any(m.startswith("[ANSWER:") for m in SENT))
+
+SENT.clear()
+send(C, interactive_id="unknown_row")
+check("C: unknown FAQ id re-sends the menu", any(m.startswith("[LIST") for m in SENT))
 
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")

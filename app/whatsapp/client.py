@@ -90,6 +90,36 @@ def send_image(to: str, media_id: str, caption: str | None = None) -> None:
     resp.raise_for_status()
 
 
+def send_list(to: str, body: str, button: str, rows: list[dict],
+              section_title: str = "Questions", header: str | None = None) -> None:
+    """Send an interactive list message (a tappable menu). Each row is
+    {id, title, description}. Tapping a row sends its id back to the webhook."""
+    if _dry_run():
+        logger.info("[DRY_RUN] → %s: [list %s] %d rows", to, button, len(rows))
+        return
+
+    interactive = {
+        "type": "list",
+        "body": {"text": body},
+        "action": {"button": button,
+                   "sections": [{"title": section_title, "rows": rows}]},
+    }
+    if header:
+        interactive["header"] = {"type": "text", "text": header}
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "interactive",
+        "interactive": interactive,
+    }
+    url = f"{GRAPH_BASE}/{_phone_number_id()}/messages"
+    with httpx.Client(timeout=30) as client:
+        resp = client.post(url, headers=_auth_headers(), json=payload)
+    if resp.status_code >= 400:
+        logger.error("send_list failed (%s): %s", resp.status_code, resp.text)
+    resp.raise_for_status()
+
+
 def send_document(to: str, media_id: str, filename: str, caption: str | None = None) -> None:
     """Send a previously-uploaded document (PDF) by its media id."""
     if _dry_run():
