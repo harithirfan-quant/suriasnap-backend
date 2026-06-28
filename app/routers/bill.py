@@ -1,5 +1,4 @@
 import io
-import os
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
 from pydantic import BaseModel
@@ -9,26 +8,6 @@ from app.services import ocr_service
 
 router = APIRouter()
 
-
-@router.get("/ocr-selftest", tags=["Bill Scan"])
-def ocr_selftest():
-    """Diagnostic: confirm Claude Vision is reachable and the model ID is valid.
-    Surfaces the real error so we don't debug blind. (Safe to remove later.)"""
-    if not os.getenv("ANTHROPIC_API_KEY"):
-        return {"key_present": False, "engine": "tesseract (no key)"}
-    try:
-        import anthropic
-        client = anthropic.Anthropic()
-        r = client.messages.create(
-            model=ocr_service.CLAUDE_MODEL, max_tokens=10,
-            messages=[{"role": "user", "content": "Reply with just: OK"}],
-        )
-        reply = "".join(b.text for b in r.content if getattr(b, "type", "") == "text")
-        return {"key_present": True, "model": ocr_service.CLAUDE_MODEL,
-                "claude_ok": True, "reply": reply.strip()}
-    except Exception as e:
-        return {"key_present": True, "model": ocr_service.CLAUDE_MODEL,
-                "claude_ok": False, "error": f"{type(e).__name__}: {e}"}
 
 ALLOWED_TYPES = {"image/jpeg", "image/png", "application/pdf"}
 MAX_FILE_SIZE  = 10 * 1024 * 1024  # 10 MB
