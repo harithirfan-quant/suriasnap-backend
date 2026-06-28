@@ -83,8 +83,12 @@ def normalize_state(state: str | None) -> str | None:
 
 
 def installers_in(state: str) -> list[dict]:
-    """All installers based in `state` (canonical name)."""
-    return [i for i in _load()["installers"] if i["hq_state"] == state]
+    """All installers with a presence in `state` — i.e. HQ'd there, or with a
+    listed branch office there (canonical name)."""
+    return [
+        i for i in _load()["installers"]
+        if i["hq_state"] == state or state in i.get("branches", [])
+    ]
 
 
 def meta() -> dict:

@@ -126,6 +126,68 @@
       "coverage": "nationwide",
       "focus": ["residential", "commercial"],
       "blurb": "Public-listed solar EPCC (Fabulous Sunview) serving homes and businesses."
+    },
+    {
+      "name": "Solar Sunyield",
+      "hq_state": "Perak",
+      "city": "Ipoh",
+      "website": "https://www.solarsunyield.com",
+      "phone": "+605-541 5663",
+      "coverage": "peninsular",
+      "focus": ["residential", "commercial"],
+      "blurb": "Ipoh-based installer for homes and businesses across Perak and the Klang Valley."
+    },
+    {
+      "name": "Brilliant Solar",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "branches": ["Penang"],
+      "website": "https://brilliantsolar.com.my",
+      "phone": "+6018-373 1786",
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "SEDA-registered installer with a Klang Valley HQ and a Penang (Butterworth) branch."
+    },
+    {
+      "name": "Solana Tec",
+      "hq_state": "Johor",
+      "city": "Johor Bahru",
+      "branches": ["Melaka"],
+      "website": "https://www.solanatec.com.my",
+      "phone": "+6016-720 3487",
+      "coverage": "peninsular",
+      "focus": ["residential"],
+      "blurb": "Residential solar specialist serving Johor and Melaka."
+    },
+    {
+      "name": "Proksi Solar",
+      "hq_state": "Johor",
+      "city": "Johor Bahru",
+      "website": "https://proksisolar.com.my",
+      "phone": null,
+      "coverage": "peninsular",
+      "focus": ["residential", "commercial"],
+      "blurb": "Johor Bahru-based solar installer for homes and businesses."
+    },
+    {
+      "name": "Guide Solar (Guide Engineering)",
+      "hq_state": "Sarawak",
+      "city": "Kuching",
+      "website": "https://www.guidesolar.com.my",
+      "phone": "+6016-202 1690",
+      "coverage": "regional",
+      "focus": ["residential", "commercial"],
+      "blurb": "Kuching-based solar PV and electrical engineering provider for Sarawak."
+    },
+    {
+      "name": "BSL Eco Energy",
+      "hq_state": "Sabah",
+      "city": "Kota Kinabalu",
+      "website": "https://bsleco.com",
+      "phone": "+6088-313 188",
+      "coverage": "regional",
+      "focus": ["residential", "commercial"],
+      "blurb": "Sabah-based solar EPCC, also operating in the Klang Valley."
     }
   ]
 }

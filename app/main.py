@@ -41,7 +41,7 @@ app.include_router(whatsapp.router,    tags=["WhatsApp"])
 @app.get("/", tags=["Health"])
 def root():
     # `ocr` marker lets us confirm which build is live after a deploy.
-    return {"status": "ok", "service": "SuriaSnap API", "ocr": "installers-v12"}
+    return {"status": "ok", "service": "SuriaSnap API", "ocr": "installers-v13"}
 
 
 @app.get("/health", tags=["Health"])

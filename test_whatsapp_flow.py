@@ -140,16 +140,16 @@ check("B: valid kwh, no state → WAITING_FOR_STATE", state_of(B) == states.WAIT
 send(B, text="Mordor")
 check("B: invalid state stays in WAITING_FOR_STATE", state_of(B) == states.WAITING_FOR_STATE)
 
-send(B, text="Penang")
+send(B, text="Terengganu")
 check("B: valid state → WAITING_FOR_ROOF", state_of(B) == states.WAITING_FOR_ROOF)
 
 send(B, text="50")
 check("B: roof given → DONE", state_of(B) == states.DONE)
 summaryB = next((m for m in SENT if "Solar Estimate" in m), "")
-check("B: summary shows Penang", "Penang" in summaryB)
+check("B: summary shows Terengganu", "Terengganu" in summaryB)
 check("B: summary shows 450 kWh", "450 kWh" in summaryB)
-check("B: Penang has no local installers → frank fallback wording",
-      "No installers are based in Penang" in summaryB)
+check("B: Terengganu has no local installers → frank fallback wording",
+      "No installers are based in Terengganu" in summaryB)
 check("B: fallback names the nearest state with installers", "Selangor" in summaryB)
 
 # ── Run C: FAQ menu + tap + free-text assistant ──────────────────────────────
