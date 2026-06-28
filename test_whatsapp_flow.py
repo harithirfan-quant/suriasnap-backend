@@ -112,6 +112,9 @@ check("A: summary shows payback", "Payback" in summary or "payback" in summary)
 check("A: PDF document sent", any(m.startswith("[DOC") for m in SENT))
 check("A: design image sent", any(m.startswith("[IMG]") for m in SENT))
 check("A: summary mentions design preview", "design preview" in summary.lower())
+check("A: summary lists a real Selangor installer", "Solarvest" in summary)
+check("A: Selangor is a direct match (no fallback wording)",
+      "No installers are based in Selangor" not in summary)
 
 # ── Run B: OCR misses usage → asks kWh, state, roof ──────────────────────────
 print("\n=== Run B: OCR misses usage ===")
@@ -145,6 +148,9 @@ check("B: roof given → DONE", state_of(B) == states.DONE)
 summaryB = next((m for m in SENT if "Solar Estimate" in m), "")
 check("B: summary shows Penang", "Penang" in summaryB)
 check("B: summary shows 450 kWh", "450 kWh" in summaryB)
+check("B: Penang has no local installers → frank fallback wording",
+      "No installers are based in Penang" in summaryB)
+check("B: fallback names the nearest state with installers", "Selangor" in summaryB)
 
 # ── Run C: FAQ menu + tap + free-text assistant ──────────────────────────────
 print("\n=== Run C: FAQ + assistant ===")
@@ -170,6 +176,25 @@ check("C: free-text question routes to the assistant",
 SENT.clear()
 send(C, interactive_id="unknown_row")
 check("C: unknown FAQ id re-sends the menu", any(m.startswith("[LIST") for m in SENT))
+
+# ── Run D: installer lookup service ──────────────────────────────────────────
+print("\n=== Run D: installer lookup ===")
+from app.services import installers as inst
+
+sel = inst.find_installers("Selangor")
+check("D: Selangor resolves directly (no fallback)",
+      sel["resolved"] and not sel["fallback"] and sel["count"] > 0)
+
+ked = inst.find_installers("Kedah")
+check("D: Kedah falls back to a nearby state",
+      ked["resolved"] and ked["fallback"] and ked["nearest_state"] is not None)
+
+pin = inst.find_installers("Pulau Pinang")
+check("D: 'Pulau Pinang' normalises to Penang", pin["requested_state"] == "Penang")
+
+bad = inst.find_installers("Atlantis")
+check("D: unknown state is reported as unresolved",
+      not bad["resolved"] and bad["count"] == 0)
 
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")

@@ -22,6 +22,7 @@ from app.extraction import bill_extractor
 from app.reports import adapter as reports
 from app.reports import design_preview
 from app.services import assistant
+from app.services import installers
 from app.solar import adapter as solar
 from app.whatsapp import client as wa
 from app.whatsapp.parser import InboundMessage
@@ -371,8 +372,35 @@ def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
         "🛠️ *Professional design preview*\n"
         f"{r['num_panels_400w']} × 400W · 15° tilt · {orientation}-facing · "
         f"~{sy:,} kWh/kWp/yr — see the design image & full report below.\n\n"
-        "👉 *Take the first step today* — browse trusted, SEDA-registered "
-        f"installers near you:\n{SEDA_RPVSP_URL}\n\n"
-        "_Based on TNB 2025/26 tariffs & SEDA NEM rates. Get a free site survey "
+        + _installer_block(state)
+        + "_Based on TNB 2025/26 tariffs & SEDA NEM rates. Get a free site survey "
         "from an installer for exact figures._"
     )
+
+
+def _installer_block(state: str) -> str:
+    """Real SEDA-registered installers for the user's state (with nearest-state
+    fallback), formatted for WhatsApp. Falls back to the directory link if the
+    state isn't recognised."""
+    rec = installers.find_installers(state)
+    url = rec.get("official_directory") or SEDA_RPVSP_URL
+
+    if not rec["resolved"] or not rec["installers"]:
+        return ("👉 *Next step:* browse trusted, SEDA-registered installers near "
+                f"you:\n{url}\n\n")
+
+    lines = []
+    for i in rec["installers"][:3]:
+        web = i["website"].split("//")[-1].rstrip("/")
+        loc = i["city"] if i["city"] == i["hq_state"] else f"{i['city']}, {i['hq_state']}"
+        lines.append(f"• *{i['name']}* — {loc}\n  {web}")
+    body = "\n".join(lines)
+
+    if rec["fallback"]:
+        header = (f"🛠️ *No installers are based in {rec['requested_state']}* — here are "
+                  f"the nearest SEDA-registered ones (in {rec['nearest_state']}; most "
+                  f"also serve {rec['requested_state']}):")
+    else:
+        header = f"🛠️ *SEDA-registered installers in {rec['requested_state']}:*"
+
+    return f"{header}\n{body}\n\nFull SEDA directory:\n{url}\n\n"

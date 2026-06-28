@@ -1,0 +1,131 @@
+{
+  "_meta": {
+    "description": "Curated list of SEDA-registered PV service providers (RPVSP) for SuriaSnap.",
+    "source": "Compiled from the providers' own public websites. SEDA's authoritative RPVSP directory is login-gated at https://www.seda.gov.my/directory/registered-pv-service-provider-directory/ and cannot be browsed publicly, so this is a verified subset — not the complete registry.",
+    "official_directory": "https://www.seda.gov.my/directory/registered-pv-service-provider-directory/",
+    "updated": "2026-06",
+    "disclaimer": "Always confirm a provider's current SEDA registration on the official directory before signing any contract."
+  },
+  "installers": [
+    {
+      "name": "Solarvest Energy",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "website": "https://solarvest.com",
+      "phone": "+603-7625 3211",
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Public-listed solar EPCC. Residential rooftop via its PowerVest home arm."
+    },
+    {
+      "name": "Solaroo Energy",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "website": "https://solaroo.com",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["residential"],
+      "blurb": "Home-solar specialist offering end-to-end NEM installation and financing."
+    },
+    {
+      "name": "Pekat Solar (Pekat Group)",
+      "hq_state": "Selangor",
+      "city": "Puchong",
+      "website": "https://pekatgroup.com.my",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Public-listed solar & earthing group covering residential and C&I rooftop."
+    },
+    {
+      "name": "Verdant Solar",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "website": "https://verdantsolar.my",
+      "phone": null,
+      "coverage": "peninsular",
+      "focus": ["residential"],
+      "blurb": "Residential-focused rooftop installer serving the Klang Valley and Peninsular Malaysia."
+    },
+    {
+      "name": "ERS Energy",
+      "hq_state": "Selangor",
+      "city": "Shah Alam",
+      "website": "https://ers.my",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Turnkey solar EPCC for homes and businesses."
+    },
+    {
+      "name": "Plus Solar",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://plus-solar.com",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Award-winning C&I and residential solar provider."
+    },
+    {
+      "name": "SOLS Energy",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://www.solsenergy.com",
+      "phone": "+6018-399 9247",
+      "coverage": "nationwide",
+      "focus": ["residential"],
+      "blurb": "Residential solar social enterprise with a strong home-install focus."
+    },
+    {
+      "name": "Samaiden",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kepong",
+      "website": "https://samaiden.com.my",
+      "phone": "+603-6150 7941",
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Public-listed renewable-energy EPCC and consultancy."
+    },
+    {
+      "name": "Ditrolic Solar",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://ditrolicsolar.com",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "One of Malaysia's largest solar EPCCs; residential via Ditrolic Home."
+    },
+    {
+      "name": "GSPARX (TNB Group)",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://gsparx.com.my",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "TNB Group's solar arm; residential rooftop with rent-to-own options."
+    },
+    {
+      "name": "Cypark Renewable Energy",
+      "hq_state": "Negeri Sembilan",
+      "city": "Seremban",
+      "website": "https://cypark.com.my",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["commercial"],
+      "blurb": "Public-listed renewable-energy and large-scale solar developer."
+    },
+    {
+      "name": "Sunview Group",
+      "hq_state": "Johor",
+      "city": "Johor Bahru",
+      "website": "https://sunviewgroup.com",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Public-listed solar EPCC (Fabulous Sunview) serving homes and businesses."
+    }
+  ]
+}

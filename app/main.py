@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import assessment, bill, report, whatsapp
+from app.routers import assessment, bill, installers, report, whatsapp
 from app.conversations import store
 
 load_dotenv()
@@ -33,6 +33,7 @@ app.add_middleware(
 app.include_router(assessment.router, prefix="/api", tags=["Assessment"])
 app.include_router(bill.router,        prefix="/api", tags=["Bill Scan"])
 app.include_router(report.router,      prefix="/api", tags=["Report"])
+app.include_router(installers.router,  prefix="/api", tags=["Installers"])
 # WhatsApp webhook is intentionally unprefixed (Meta points at /webhooks/whatsapp)
 app.include_router(whatsapp.router,    tags=["WhatsApp"])
 
@@ -40,7 +41,7 @@ app.include_router(whatsapp.router,    tags=["WhatsApp"])
 @app.get("/", tags=["Health"])
 def root():
     # `ocr` marker lets us confirm which build is live after a deploy.
-    return {"status": "ok", "service": "SuriaSnap API", "ocr": "polish-v11"}
+    return {"status": "ok", "service": "SuriaSnap API", "ocr": "installers-v12"}
 
 
 @app.get("/health", tags=["Health"])
