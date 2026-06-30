@@ -188,6 +188,49 @@
       "coverage": "regional",
       "focus": ["residential", "commercial"],
       "blurb": "Sabah-based solar EPCC, also operating in the Klang Valley."
+    },
+    {
+      "name": "Renosun",
+      "hq_state": "Kedah",
+      "city": "Alor Setar",
+      "branches": ["Perlis"],
+      "website": "https://www.renosungroup.com",
+      "phone": "+604-731 9922",
+      "coverage": "peninsular",
+      "focus": ["residential", "commercial"],
+      "blurb": "14-year northern specialist (400+ installs); 80%+ of projects in Kedah, Perlis and Penang."
+    },
+    {
+      "name": "Arus EnerG",
+      "hq_state": "Kelantan",
+      "city": "Kota Bharu",
+      "website": "https://arusenerg.com",
+      "phone": "+6019-932 1677",
+      "coverage": "regional",
+      "focus": ["residential", "commercial"],
+      "blurb": "Kota Bharu-based SEDA-certified solar installer; billed as the largest Bumiputera solar provider in Malaysia."
+    },
+    {
+      "name": "Alpha Solar",
+      "hq_state": "Pahang",
+      "city": "Kuantan",
+      "branches": ["Penang", "Johor"],
+      "website": "https://alphasolar.my",
+      "phone": "+6013-818 1827",
+      "coverage": "peninsular",
+      "focus": ["residential", "commercial"],
+      "blurb": "East-coast specialist with a Kuantan HQ; also in Penang, Johor and Selangor."
+    },
+    {
+      "name": "Trexon Energy",
+      "hq_state": "Selangor",
+      "city": "Cyberjaya",
+      "branches": ["Terengganu", "Perak", "Kedah"],
+      "website": "https://trexon.my",
+      "phone": "+6012-770 7249",
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Malaysia's first app-based solar platform; serves all major states including east-coast Terengganu."
     }
   ]
 }

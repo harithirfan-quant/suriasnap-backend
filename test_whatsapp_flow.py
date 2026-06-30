@@ -140,16 +140,16 @@ check("B: valid kwh, no state → WAITING_FOR_STATE", state_of(B) == states.WAIT
 send(B, text="Mordor")
 check("B: invalid state stays in WAITING_FOR_STATE", state_of(B) == states.WAITING_FOR_STATE)
 
-send(B, text="Terengganu")
+send(B, text="Putrajaya")
 check("B: valid state → WAITING_FOR_ROOF", state_of(B) == states.WAITING_FOR_ROOF)
 
 send(B, text="50")
 check("B: roof given → DONE", state_of(B) == states.DONE)
 summaryB = next((m for m in SENT if "Solar Estimate" in m), "")
-check("B: summary shows Terengganu", "Terengganu" in summaryB)
+check("B: summary shows Putrajaya", "Putrajaya" in summaryB)
 check("B: summary shows 450 kWh", "450 kWh" in summaryB)
-check("B: Terengganu has no local installers → frank fallback wording",
-      "No installers are based in Terengganu" in summaryB)
+check("B: Putrajaya has no local installers → frank fallback wording",
+      "No installers are based in Putrajaya" in summaryB)
 check("B: fallback names the nearest state with installers", "Selangor" in summaryB)
 
 # ── Run C: FAQ menu + tap + free-text assistant ──────────────────────────────
@@ -185,9 +185,9 @@ sel = inst.find_installers("Selangor")
 check("D: Selangor resolves directly (no fallback)",
       sel["resolved"] and not sel["fallback"] and sel["count"] > 0)
 
-ked = inst.find_installers("Kedah")
-check("D: Kedah falls back to a nearby state",
-      ked["resolved"] and ked["fallback"] and ked["nearest_state"] is not None)
+lab = inst.find_installers("Labuan")
+check("D: Labuan falls back to the nearest state (Sabah)",
+      lab["resolved"] and lab["fallback"] and lab["nearest_state"] == "Sabah")
 
 pin = inst.find_installers("Pulau Pinang")
 check("D: 'Pulau Pinang' normalises to Penang", pin["requested_state"] == "Penang")
