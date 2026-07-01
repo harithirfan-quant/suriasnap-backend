@@ -24,6 +24,7 @@ class AssessResponse(BaseModel):
     system_cost_rm: float
     payback_years: float
     roi_25_year_rm: float
+    export_rate_rm: float
 
 
 @router.post("/assess", response_model=AssessResponse)

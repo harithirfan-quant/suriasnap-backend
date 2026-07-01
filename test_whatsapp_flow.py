@@ -166,7 +166,7 @@ check("C: 'menu' sends the FAQ list", any(m.startswith("[LIST") for m in SENT))
 SENT.clear()
 send(C, interactive_id="faq_nem")
 check("C: tapping an FAQ row returns the canned answer",
-      any("Net Energy Metering" in m for m in SENT))
+      any("Solar ATAP" in m for m in SENT))
 
 SENT.clear()
 send(C, text="how do solar panels work?")

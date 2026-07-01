@@ -25,13 +25,13 @@ FAQ = [
     },
     {
         "id": "faq_nem",
-        "title": "What is NEM?",
-        "desc": "Net Energy Metering explained",
+        "title": "What is Solar ATAP?",
+        "desc": "Solar ATAP programme explained",
         "answer": (
-            "*NEM* (Net Energy Metering) under SEDA's *Solar ATAP* scheme lets you "
-            "sell surplus solar power back to TNB at *RM 0.2703/kWh*. Your panels "
-            "offset your own usage first; any extra is exported to the grid and "
-            "credited on your next TNB bill."
+            "*Solar ATAP* (Skim Suria Atap) is SEDA's programme that lets you sell "
+            "surplus solar power back to TNB. Export rates: *RM 0.27/kWh* (≤1,500 kWh/month) "
+            "or *RM 0.37/kWh* (>1,500 kWh/month). Your panels offset your own usage first; "
+            "any excess is exported and credited on your next TNB bill. 10-year contract, no quota limits."
         ),
     },
     {
@@ -70,7 +70,7 @@ FAQ = [
         "desc": "Steps to go solar",
         "answer": (
             "1) Get quotes from *SEDA-registered installers*.\n"
-            "2) They submit your *Solar ATAP / NEM* application to SEDA.\n"
+            "2) They submit your *Solar ATAP* application to SEDA.\n"
             "3) After approval, they install and TNB fits a bi-directional meter.\n"
             f"Find installers: {SEDA_URL}"
         ),
@@ -78,10 +78,10 @@ FAQ = [
     {
         "id": "faq_seda",
         "title": "What is SEDA?",
-        "desc": "The authority behind NEM",
+        "desc": "The authority behind Solar ATAP",
         "answer": (
             "*SEDA* (Sustainable Energy Development Authority) is Malaysia's agency "
-            "that runs the *Solar ATAP / NEM* programme and registers approved "
+            "that runs the *Solar ATAP* programme and registers approved "
             "solar installers (RPVSP). Always use a SEDA-registered installer."
         ),
     },

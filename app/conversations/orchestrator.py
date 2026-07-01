@@ -52,7 +52,7 @@ INTRO = (
     "Send me a photo or PDF of your latest *TNB bill* and I'll estimate your "
     "rooftop solar size, monthly savings, payback period, and CO2 reduction — "
     "free, in under a minute.\n\n"
-    "You can also *ask me anything* about solar, NEM, SEDA or TNB — or type "
+    "You can also *ask me anything* about solar, Solar ATAP, SEDA or TNB — or type "
     "*menu* for common questions."
 )
 
@@ -373,7 +373,7 @@ def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
         f"{r['num_panels_400w']} × 400W · 15° tilt · {orientation}-facing · "
         f"~{sy:,} kWh/kWp/yr — see the design image & full report below.\n\n"
         + _installer_block(state)
-        + "_Based on TNB 2025/26 tariffs & SEDA NEM rates. Get a free site survey "
+        + "_Based on TNB 2025/26 tariffs & SEDA Solar ATAP rates. Get a free site survey "
         "from an installer for exact figures._"
     )
 

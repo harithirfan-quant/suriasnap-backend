@@ -190,7 +190,7 @@ def _savings_callout(styles: dict, data: dict) -> list:
     )
     why = Paragraph(
         f"<b>Why?</b> Right now about <b>RM {monthly:,.0f}/month</b> leaves your pocket for TNB. "
-        "Solar offsets your usage first and exports the surplus for NEM credits, so most of that "
+        "Solar offsets your usage first and exports the surplus for Solar ATAP credits, so most of that "
         "money stays with you instead. Panels run for 25+ years — every month you wait is a saving "
         "you don't get back.",
         styles["small"],
@@ -354,13 +354,14 @@ def _solar_atap_explainer(styles: dict) -> list:
     """Brief Solar ATAP scheme description and export rates."""
     body = (
         "The <b>Solar ATAP</b> (Skim Suria Atap) programme by SEDA Malaysia enables residential "
-        "solar owners to sell surplus electricity back to TNB at the Net Energy Metering (NEM) "
-        "export rate of <b>RM 0.2703 per kWh</b>. Generation offsets your consumption first; "
+        "solar owners to sell surplus electricity back to TNB. Export rates: "
+        "<b>RM 0.27 per kWh</b> (≤1,500 kWh/month consumption) or <b>RM 0.37 per kWh</b> "
+        "(>1,500 kWh/month consumption). Generation offsets your consumption first; "
         "any excess is exported to the grid for credit on your next TNB bill. "
-        "System capacity is capped at your contracted demand or 12 kWp, whichever is lower."
+        "10-year contract, no quota limits. System capacity is capped at your contracted demand or 12 kWp, whichever is lower."
     )
     return [
-        Paragraph("About Solar ATAP (NEM Scheme)", styles["section"]),
+        Paragraph("About Solar ATAP", styles["section"]),
         HRFlowable(width="100%", thickness=1, color=TEAL_LIGHT, spaceAfter=6),
         Paragraph(body, styles["body"]),
     ]
@@ -371,7 +372,7 @@ def _next_steps(styles: dict) -> list:
         "1. Contact a <b>SEDA-registered installer</b> for a site survey and detailed quotation.",
         "2. Submit your Solar ATAP application via the <b>SEDA Malaysia portal</b>.",
         "3. After approval, your installer connects the system and TNB installs a bidirectional meter.",
-        "4. Start generating clean energy and earning NEM credits on your monthly bill.",
+        "4. Start generating clean energy and earning Solar ATAP credits on your monthly bill.",
     ]
     items = [Paragraph(s, styles["body"]) for s in steps]
     note  = Paragraph(

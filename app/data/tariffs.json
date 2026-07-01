@@ -10,6 +10,8 @@
     "retail_waived_below_kwh": 600
   },
   "solar_atap": {
-    "export_rate_rm": 0.2703
+    "export_rate_low_rm": 0.2700,
+    "export_rate_high_rm": 0.3700,
+    "threshold_kwh": 1500
   }
 }

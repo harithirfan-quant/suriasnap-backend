@@ -54,7 +54,12 @@ def assess(
 ) -> dict:
     ghi               = STATES[state]["ghi"]
     orientation_factor = ORIENTATION_FACTORS[roof_orientation]
-    export_rate       = TARIFFS["solar_atap"]["export_rate_rm"]
+    atap              = TARIFFS["solar_atap"]
+    export_rate       = (
+        atap["export_rate_low_rm"]
+        if monthly_consumption_kwh <= atap["threshold_kwh"]
+        else atap["export_rate_high_rm"]
+    )
 
     # --- System sizing ---
     panel_area_sqm      = PANEL_WATTAGE / (1000 * PANEL_EFFICIENCY)   # ~1.905 m²
@@ -98,4 +103,5 @@ def assess(
         "system_cost_rm":          round(system_cost_rm, 2),
         "payback_years":           round(payback_years, 1),
         "roi_25_year_rm":          round(roi_25_year_rm, 2),
+        "export_rate_rm":          export_rate,
     }
