@@ -3,7 +3,7 @@
     "description": "Curated list of SEDA-registered PV service providers (RPVSP) for SuriaSnap.",
     "source": "Compiled from the providers' own public websites. SEDA's authoritative RPVSP directory is login-gated at https://www.seda.gov.my/directory/registered-pv-service-provider-directory/ and cannot be browsed publicly, so this is a verified subset — not the complete registry.",
     "official_directory": "https://www.seda.gov.my/directory/registered-pv-service-provider-directory/",
-    "updated": "2026-06",
+    "updated": "2026-07",
     "disclaimer": "Always confirm a provider's current SEDA registration on the official directory before signing any contract."
   },
   "installers": [
@@ -231,6 +231,57 @@
       "coverage": "nationwide",
       "focus": ["residential", "commercial"],
       "blurb": "Malaysia's first app-based solar platform; serves all major states including east-coast Terengganu."
+    },
+    {
+      "name": "Progressture Power (Progressture Solar)",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://www.progressturesolar.com",
+      "phone": "+603-6413 6568",
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Southeast Asia-focused EPCC solar developer and RPVI; holds SEDA RPVSP, RPVI, and G7 CIDB licence. Serves residential rooftops through to utility-scale farms; also offers battery storage, EV charging, PPAs, and sustainability consulting."
+    },
+    {
+      "name": "Milieu Solar",
+      "hq_state": "Selangor",
+      "city": "Kota Damansara",
+      "website": "https://milieu.com.my",
+      "phone": "+603-7665 5727",
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Award-winning EPCC solar provider (2000+ projects, 80 MWp delivered since 2021); Golden Bull Award 2024 winner. Covers residential, commercial, and industrial rooftop installations nationwide."
+    },
+    {
+      "name": "Northern Solar",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "branches": ["Penang", "Kedah", "Perlis", "Perak"],
+      "website": "https://northernsolar.com.my",
+      "phone": "+603-7839 8319",
+      "coverage": "peninsular",
+      "focus": ["residential", "commercial"],
+      "blurb": "Publicly-listed (ACE Market 2025) solar EPCC specialist with strong northern-Malaysia roots. Penang branch in Bukit Mertajam; covers Penang, Perak, Kedah, Perlis, and expanding into Sabah."
+    },
+    {
+      "name": "Jesselton Solar Services",
+      "hq_state": "Sabah",
+      "city": "Kota Kinabalu",
+      "website": "https://www.jesseltonsolar.com",
+      "phone": "+6016-285 2991",
+      "coverage": "regional",
+      "focus": ["residential", "commercial"],
+      "blurb": "Self-described largest solar PV contractor in Sabah. Full EPCC, solar design, electrical works up to 132 kV, and long-term maintenance for residential, commercial, and industrial clients across Sabah."
+    },
+    {
+      "name": "Mestron Energy",
+      "hq_state": "Selangor",
+      "city": "Puchong",
+      "website": "https://www.mestron.com.my",
+      "phone": "+603-8069 1815",
+      "coverage": "nationwide",
+      "focus": ["residential", "commercial"],
+      "blurb": "Subsidiary of Mestron Holdings Berhad; holds both RPVSP and RPVI registrations with SEDA. Covers solar, biogas, hydro, and energy-efficiency projects for residential and commercial clients nationwide."
     }
   ]
 }
