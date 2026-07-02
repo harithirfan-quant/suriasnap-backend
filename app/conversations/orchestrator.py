@@ -23,6 +23,7 @@ from app.reports import adapter as reports
 from app.reports import design_preview
 from app.services import assistant
 from app.services import installers
+from app.services.utils import utility_name
 from app.solar import adapter as solar
 from app.whatsapp import client as wa
 from app.whatsapp.parser import InboundMessage
@@ -49,10 +50,10 @@ _FAQ_COMMANDS = {
 
 INTRO = (
     "👋 Hi! I'm *SuriaSnap*.\n\n"
-    "Send me a photo or PDF of your latest *TNB bill* and I'll estimate your "
+    "Send me a photo or PDF of your latest *electricity bill* and I'll estimate your "
     "rooftop solar size, monthly savings, payback period, and CO2 reduction — "
     "free, in under a minute.\n\n"
-    "You can also *ask me anything* about solar, Solar ATAP, SEDA or TNB — or type "
+    "You can also *ask me anything* about solar, Solar ATAP, SEDA or your utility — or type "
     "*menu* for common questions."
 )
 
@@ -165,7 +166,7 @@ def _route(phone: str, msg: InboundMessage) -> None:
         answer = faq.faq_answer(msg.text)
         if answer:
             _send(phone, answer)
-            _send(phone, "Type *menu* for more, or send your *TNB bill* for a free estimate.")
+            _send(phone, "Type *menu* for more, or send your *electricity bill* for a free estimate.")
         else:
             _send_faq_menu(phone)
         return
@@ -181,7 +182,7 @@ def _route(phone: str, msg: InboundMessage) -> None:
         return
 
     # Stickers, audio, etc.
-    _send(phone, "Please send your *TNB bill* as a photo or PDF 📄, or type *hi* to start.")
+    _send(phone, "Please send your *electricity bill* as a photo or PDF 📄, or type *hi* to start.")
 
 
 def _handle_text(phone: str, state: str, text: str) -> None:
@@ -365,7 +366,7 @@ def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
         "basically free electricity\n"
         f"🌳 *{co2:,.0f} kg* less CO₂ a year — like planting *{trees:,} trees* 🌲\n\n"
         "⏰ *The hidden cost of waiting:* every month you stay on the grid, "
-        f"~RM {monthly:,.0f} leaves your pocket for TNB — about *RM {annual:,.0f} "
+        f"~RM {monthly:,.0f} leaves your pocket for {utility_name(state)} — about *RM {annual:,.0f} "
         "a year* you'll never get back. Solar panels run for 25+ years, so the "
         "sooner you switch, the more you keep. Your roof is already sitting in the "
         "sun — it might as well be paying you. ☀️\n\n"
@@ -373,7 +374,7 @@ def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
         f"{r['num_panels_400w']} × 400W · 15° tilt · {orientation}-facing · "
         f"~{sy:,} kWh/kWp/yr — see the design image & full report below.\n\n"
         + _installer_block(state)
-        + "_Based on TNB 2025/26 tariffs & SEDA Solar ATAP rates. Get a free site survey "
+        + f"_Based on {utility_name(state)} 2025/26 tariffs & SEDA Solar ATAP rates. Get a free site survey "
         "from an installer for exact figures._"
     )
 

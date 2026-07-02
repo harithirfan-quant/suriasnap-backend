@@ -17,6 +17,7 @@ from reportlab.platypus import (
 )
 
 from app.reports import design_preview
+from app.services.utils import utility_name
 
 # ---------------------------------------------------------------------------
 # Brand colours
@@ -153,7 +154,7 @@ def _user_details(styles: dict, inputs: dict) -> list:
     ]
 
 
-def _savings_callout(styles: dict, data: dict) -> list:
+def _savings_callout(styles: dict, data: dict, state: str = "") -> list:
     """Eye-catching 'install now' savings banner placed right after the
     property details — leads with the yearly saving and the cost of waiting."""
     monthly = data["monthly_savings_rm"]
@@ -188,8 +189,9 @@ def _savings_callout(styles: dict, data: dict) -> list:
             ("ROUNDEDCORNERS", [8]),
         ]),
     )
+    utility = utility_name(state)
     why = Paragraph(
-        f"<b>Why?</b> Right now about <b>RM {monthly:,.0f}/month</b> leaves your pocket for TNB. "
+        f"<b>Why?</b> Right now about <b>RM {monthly:,.0f}/month</b> leaves your pocket for {utility}. "
         "Solar offsets your usage first and exports the surplus for Solar ATAP credits, so most of that "
         "money stays with you instead. Panels run for 25+ years — every month you wait is a saving "
         "you don't get back.",
@@ -350,14 +352,15 @@ def _environmental_impact(styles: dict, data: dict) -> list:
     ]
 
 
-def _solar_atap_explainer(styles: dict) -> list:
+def _solar_atap_explainer(styles: dict, state: str = "") -> list:
     """Brief Solar ATAP scheme description and export rates."""
+    utility = utility_name(state)
     body = (
         "The <b>Solar ATAP</b> (Skim Suria Atap) programme by SEDA Malaysia enables residential "
-        "solar owners to sell surplus electricity back to TNB. Export rates: "
+        f"solar owners to sell surplus electricity back to {utility}. Export rates: "
         "<b>RM 0.27 per kWh</b> (≤1,500 kWh/month consumption) or <b>RM 0.37 per kWh</b> "
         "(>1,500 kWh/month consumption). Generation offsets your consumption first; "
-        "any excess is exported to the grid for credit on your next TNB bill. "
+        "any excess is exported to the grid for credit on your next electricity bill. "
         "10-year contract, no quota limits. System capacity is capped at your contracted demand or 12 kWp, whichever is lower."
     )
     return [
@@ -367,11 +370,12 @@ def _solar_atap_explainer(styles: dict) -> list:
     ]
 
 
-def _next_steps(styles: dict) -> list:
+def _next_steps(styles: dict, state: str = "") -> list:
+    utility = utility_name(state)
     steps = [
         "1. Contact a <b>SEDA-registered installer</b> for a site survey and detailed quotation.",
         "2. Submit your Solar ATAP application via the <b>SEDA Malaysia portal</b>.",
-        "3. After approval, your installer connects the system and TNB installs a bidirectional meter.",
+        f"3. After approval, your installer connects the system and {utility} installs a bidirectional meter.",
         "4. Start generating clean energy and earning Solar ATAP credits on your monthly bill.",
     ]
     items = [Paragraph(s, styles["body"]) for s in steps]
@@ -427,16 +431,17 @@ def generate_report(assessment_data: dict) -> bytes:
         "monthly_consumption_kwh": assessment_data["monthly_consumption_kwh"],
     }
 
+    state = inputs["state"]
     story = []
-    story += _header(styles, inputs["state"])
+    story += _header(styles, state)
     story += _user_details(styles, inputs)
-    story += _savings_callout(styles, assessment_data)
+    story += _savings_callout(styles, assessment_data, state)
     story += _system_recommendation(styles, assessment_data)
     story += _design_preview(styles, assessment_data)
     story += _financial_summary(styles, assessment_data)
     story += _environmental_impact(styles, assessment_data)
-    story += _solar_atap_explainer(styles)
-    story += _next_steps(styles)
+    story += _solar_atap_explainer(styles, state)
+    story += _next_steps(styles, state)
     story += _footer(styles)
 
     doc.build(story)

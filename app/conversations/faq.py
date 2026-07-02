@@ -18,7 +18,7 @@ FAQ = [
         "desc": "How this service works",
         "answer": (
             "*SuriaSnap* gives you an instant rooftop-solar estimate for your "
-            "Malaysian home. Just send a photo of your *TNB bill* and you'll get "
+            "Malaysian home. Just send a photo of your *electricity bill* and you'll get "
             "your recommended system size, monthly savings, payback period and "
             "CO2 reduction in seconds — free."
         ),
@@ -29,9 +29,9 @@ FAQ = [
         "desc": "Solar ATAP programme explained",
         "answer": (
             "*Solar ATAP* (Skim Suria Atap) is SEDA's programme that lets you sell "
-            "surplus solar power back to TNB. Export rates: *RM 0.27/kWh* (≤1,500 kWh/month) "
+            "surplus solar power back to your utility (TNB / SESB / SESCO). Export rates: *RM 0.27/kWh* (≤1,500 kWh/month) "
             "or *RM 0.37/kWh* (>1,500 kWh/month). Your panels offset your own usage first; "
-            "any excess is exported and credited on your next TNB bill. 10-year contract, no quota limits."
+            "any excess is exported and credited on your next electricity bill. 10-year contract, no quota limits."
         ),
     },
     {
@@ -40,7 +40,7 @@ FAQ = [
         "desc": "Typical savings on your bill",
         "answer": (
             "It depends on your usage and roof, but typical Malaysian homes cut "
-            "*50–90%* of their TNB bill. Send me your latest *TNB bill* and I'll "
+            "*50–90%* of their electricity bill. Send me your latest *electricity bill* and I'll "
             "calculate your exact savings and payback period."
         ),
     },
@@ -71,7 +71,7 @@ FAQ = [
         "answer": (
             "1) Get quotes from *SEDA-registered installers*.\n"
             "2) They submit your *Solar ATAP* application to SEDA.\n"
-            "3) After approval, they install and TNB fits a bi-directional meter.\n"
+            "3) After approval, they install and your utility (TNB / SESB / SESCO) fits a bi-directional meter.\n"
             f"Find installers: {SEDA_URL}"
         ),
     },
@@ -91,7 +91,7 @@ FAQ = [
         "desc": "Installation timeline",
         "answer": (
             "Once approved, a home system usually takes *1–3 days* to install, "
-            "plus a few weeks for SEDA/TNB approval and the bi-directional meter."
+            "plus a few weeks for SEDA and your utility to approve and fit the bi-directional meter."
         ),
     },
 ]
