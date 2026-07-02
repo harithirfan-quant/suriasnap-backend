@@ -283,6 +283,14 @@ def _handle_bill(phone: str, msg: InboundMessage) -> None:
     extraction = bill_extractor.extract_bill(path)
     store.save_extraction(phone, path, extraction, extraction.get("confidence") or 0.0)
 
+    # The raw bill image/PDF is never read again after OCR — delete it
+    # immediately rather than leaving a copy of the user's electricity bill
+    # sitting on disk (matches the retention promise in our Privacy Notice).
+    try:
+        os.remove(path)
+    except OSError:
+        logger.warning("Could not delete bill media at %s", path)
+
     # 3. seed what we learned into pending
     if extraction.get("total_kwh"):
         store.merge_pending(phone, total_kwh=extraction["total_kwh"])

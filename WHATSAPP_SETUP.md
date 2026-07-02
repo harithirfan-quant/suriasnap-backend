@@ -22,6 +22,7 @@ dashboard** in production. Never commit real values.
 | Variable | Required | What it is / where to get it |
 |---|---|---|
 | `WHATSAPP_VERIFY_TOKEN` | ✅ | A random string **you invent**. Paste the *same* value into Meta's webhook config — the GET handshake must match. |
+| `WHATSAPP_APP_SECRET` | ✅ | Meta App → **Settings → Basic → App secret**. Used to verify the `X-Hub-Signature-256` header on every inbound webhook POST, so forged requests are rejected. If unset, verification is skipped (logged as a warning) — fine for local dev, **must be set in production**. |
 | `WHATSAPP_ACCESS_TOKEN` | ✅ | Meta App → **WhatsApp → API Setup**. Temp token (24h) for testing, or a permanent System User token for production. |
 | `WHATSAPP_PHONE_NUMBER_ID` | ✅ | On the same API Setup page — the **Phone number ID** (a long number, *not* the phone number itself). |
 | `WHATSAPP_API_VERSION` | ⬜ | Graph API version. Defaults to `v21.0`. |

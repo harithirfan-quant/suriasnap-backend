@@ -16,7 +16,7 @@ import json
 import logging
 import os
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from app.conversations import states
@@ -26,6 +26,10 @@ logger = logging.getLogger("suriasnap.store")
 # Default lives at the repo root; override with SQLITE_DB_PATH. On Render's free
 # tier this file is ephemeral (resets on deploy/sleep) — acceptable for an MVP.
 DB_PATH = os.getenv("SQLITE_DB_PATH", "suriasnap.db")
+
+# How long to keep message logs and bill-extraction records, per our Privacy
+# Notice ("deleted on a short, rolling basis"). Override with RETENTION_DAYS.
+RETENTION_DAYS = int(os.getenv("RETENTION_DAYS", "30"))
 
 
 def _now() -> str:
@@ -190,3 +194,55 @@ def save_extraction(
             "extraction_json, confidence, created_at) VALUES (?, ?, ?, ?, ?)",
             (phone, raw_file_path, json.dumps(extraction), confidence, _now()),
         )
+
+
+# ── retention ─────────────────────────────────────────────────────────────────
+
+def purge_old_data(days: int = RETENTION_DAYS) -> None:
+    """
+    Delete message logs and bill-extraction records older than `days`. Bill
+    media files are already removed right after OCR (see orchestrator), so
+    this covers the remaining personal data: message text and extracted bill
+    fields (usage, amount, state). Contacts/conversation state are kept —
+    they hold no bill content, just the current step, so a returning user
+    doesn't have to restart.
+
+    Safe to call anytime; cheap at MVP volume (indexed on created_at-adjacent
+    columns via row scan, fine for a few thousand rows).
+    """
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    with _conn() as conn:
+        msgs = conn.execute(
+            "DELETE FROM messages WHERE created_at < ?", (cutoff,)
+        ).rowcount
+        extractions = conn.execute(
+            "DELETE FROM bill_extractions WHERE created_at < ?", (cutoff,)
+        ).rowcount
+    if msgs or extractions:
+        logger.info(
+            "Purged %d message(s) and %d extraction(s) older than %d days",
+            msgs, extractions, days,
+        )
+
+
+def purge_orphaned_media(media_dir: str, days: int = RETENTION_DAYS) -> None:
+    """
+    Safety net: the bill image/PDF is deleted right after OCR in the normal
+    path, but a crash between save and delete could leave a file behind.
+    Sweep anything older than `days` on startup so nothing lingers past our
+    stated retention window.
+    """
+    root = Path(media_dir)
+    if not root.exists():
+        return
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).timestamp()
+    removed = 0
+    for f in root.iterdir():
+        try:
+            if f.is_file() and f.stat().st_mtime < cutoff:
+                f.unlink()
+                removed += 1
+        except OSError:
+            logger.warning("Could not remove orphaned media file %s", f)
+    if removed:
+        logger.info("Swept %d orphaned media file(s) older than %d days", removed, days)

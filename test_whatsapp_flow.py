@@ -220,6 +220,85 @@ summaryE = next((m for m in SENT if "Solar Estimate" in m), "")
 check("E: summary shows Johor", "Johor" in summaryE)
 check("E: summary shows 380 kWh", "380 kWh" in summaryE)
 
+# ── Run F: bill media is deleted right after OCR ─────────────────────────────
+print("\n=== Run F: bill media cleanup ===")
+SENT.clear()
+bill_extractor.extract_bill = lambda path: {
+    "state": "Selangor", "total_kwh": 467, "total_amount_rm": 207.49,
+    "confidence": 0.9, "notes": [],
+}
+F = "60123000006"
+send(F, text="hi")
+media_dir = os.environ["MEDIA_DIR"]
+before = set(os.listdir(media_dir)) if os.path.isdir(media_dir) else set()
+send(F, media=True)
+after = set(os.listdir(media_dir)) if os.path.isdir(media_dir) else set()
+check("F: no new bill file left on disk after OCR", after == before)
+
+# ── Run G: webhook signature verification ────────────────────────────────────
+print("\n=== Run G: webhook signature verification ===")
+import hashlib
+import hmac as hmac_mod
+
+from app.whatsapp import parser as wa_parser
+
+body = b'{"entry": []}'
+
+check("G: no secret configured → verification skipped (dev mode)",
+      wa_parser.verify_signature(body, None) is True)
+
+os.environ["WHATSAPP_APP_SECRET"] = "test-secret"
+good_sig = "sha256=" + hmac_mod.new(b"test-secret", body, hashlib.sha256).hexdigest()
+check("G: correct signature accepted", wa_parser.verify_signature(body, good_sig) is True)
+
+bad_sig = "sha256=" + hmac_mod.new(b"wrong-secret", body, hashlib.sha256).hexdigest()
+check("G: forged signature rejected", wa_parser.verify_signature(body, bad_sig) is False)
+
+check("G: missing header rejected once secret is set",
+      wa_parser.verify_signature(body, None) is False)
+
+check("G: malformed header rejected",
+      wa_parser.verify_signature(body, "not-sha256-prefixed") is False)
+
+tampered_body = b'{"entry": [1]}'
+check("G: signature for different body is rejected",
+      wa_parser.verify_signature(tampered_body, good_sig) is False)
+
+del os.environ["WHATSAPP_APP_SECRET"]
+
+# ── Run H: data retention purge ───────────────────────────────────────────────
+print("\n=== Run H: data retention purge ===")
+import sqlite3
+from datetime import datetime, timedelta, timezone
+
+H = "60123000008"
+send(H, text="hi")  # creates a fresh, recent message row
+
+old_ts = (datetime.now(timezone.utc) - timedelta(days=99)).isoformat()
+with sqlite3.connect(os.environ["SQLITE_DB_PATH"]) as conn:
+    conn.execute(
+        "INSERT INTO messages (phone_number, direction, message_type, text, created_at) "
+        "VALUES (?, 'in', 'text', 'ancient message', ?)", (H, old_ts),
+    )
+    conn.execute(
+        "INSERT INTO bill_extractions (phone_number, raw_file_path, extraction_json, "
+        "confidence, created_at) VALUES (?, NULL, '{}', 0.9, ?)", (H, old_ts),
+    )
+
+store.purge_old_data(days=30)
+
+with sqlite3.connect(os.environ["SQLITE_DB_PATH"]) as conn:
+    remaining = conn.execute(
+        "SELECT text FROM messages WHERE phone_number = ?", (H,)
+    ).fetchall()
+    remaining_extractions = conn.execute(
+        "SELECT id FROM bill_extractions WHERE phone_number = ?", (H,)
+    ).fetchall()
+
+check("H: old message purged, recent one kept",
+      "ancient message" not in [r[0] for r in remaining] and len(remaining) >= 1)
+check("H: old bill extraction purged", len(remaining_extractions) == 0)
+
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")
 SENT.clear()

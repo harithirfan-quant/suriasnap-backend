@@ -10,6 +10,7 @@ eventually disable a webhook that's slow or errors. The heavy work (media
 download + OCR + reply) runs in a FastAPI BackgroundTask.
 """
 
+import json
 import logging
 
 from fastapi import APIRouter, BackgroundTasks, Request
@@ -41,8 +42,16 @@ async def verify(request: Request):
 @router.post("/webhooks/whatsapp")
 async def receive(request: Request, background: BackgroundTasks):
     """Ack immediately; process each message in the background."""
+    raw_body = await request.body()
+
+    if not parser.verify_signature(raw_body, request.headers.get("X-Hub-Signature-256")):
+        logger.warning("Rejected webhook POST with invalid signature")
+        # Still 200 — a 4xx here doesn't help (Meta won't retry a forged
+        # request either way) and avoids leaking verification behaviour.
+        return JSONResponse({"status": "ignored"}, status_code=200)
+
     try:
-        payload = await request.json()
+        payload = json.loads(raw_body)
     except Exception:
         logger.warning("Webhook POST with non-JSON body")
         return JSONResponse({"status": "ignored"}, status_code=200)

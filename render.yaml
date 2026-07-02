@@ -36,6 +36,13 @@ services:
         sync: false
       - key: WHATSAPP_API_VERSION
         value: v21.0
+      # App Secret from Meta App Dashboard → Settings → Basic. Used to verify
+      # the X-Hub-Signature-256 header on every inbound webhook POST, so we
+      # only process messages that genuinely came from Meta. Required in
+      # production — without it, anyone who finds the webhook URL can inject
+      # fake messages and trigger paid Claude API calls / WhatsApp sends.
+      - key: WHATSAPP_APP_SECRET
+        sync: false
 
       # ── Claude Vision (primary bill OCR) ────────────────────────────────
       # If unset, the backend falls back to local Tesseract OCR automatically.

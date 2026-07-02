@@ -19,6 +19,13 @@ def _startup() -> None:
     # Create the SQLite tables used by the WhatsApp conversation flow.
     store.init_db()
 
+    # Enforce our data-retention promise (see LegalPage / Privacy Notice) —
+    # old message logs / bill extractions get purged, and any bill media
+    # file that somehow survived past OCR gets swept. Render's free tier
+    # sleeps and wakes often, so startup fires regularly enough to matter.
+    store.purge_old_data()
+    store.purge_orphaned_media(os.getenv("MEDIA_DIR", "media"))
+
 _default_origins = "http://localhost:5173,http://localhost:3000"
 origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", _default_origins).split(",") if o.strip()]
 

@@ -6,6 +6,8 @@ We deliberately ignore status callbacks (delivered/read receipts) — those
 arrive under `value.statuses` with no `messages` array.
 """
 
+import hashlib
+import hmac
 import logging
 import os
 from dataclasses import dataclass, field
@@ -37,6 +39,32 @@ def verify_webhook(mode: str | None, token: str | None, challenge: str | None) -
         return challenge
     logger.warning("Webhook verification failed (mode=%s)", mode)
     return None
+
+
+def verify_signature(body: bytes, signature_header: str | None) -> bool:
+    """
+    Validate Meta's X-Hub-Signature-256 header against the raw request body,
+    using HMAC-SHA256 keyed with the App Secret. This proves the payload
+    actually came from Meta and wasn't forged by a third party who found the
+    webhook URL. If WHATSAPP_APP_SECRET isn't configured, verification is
+    skipped (logged loudly) so local/dev setups don't break — but it must be
+    set in production.
+    """
+    app_secret = os.getenv("WHATSAPP_APP_SECRET")
+    if not app_secret:
+        logger.warning(
+            "WHATSAPP_APP_SECRET not set — skipping webhook signature "
+            "verification (unsafe for production)"
+        )
+        return True
+
+    if not signature_header or not signature_header.startswith("sha256="):
+        logger.warning("Webhook request missing/malformed X-Hub-Signature-256")
+        return False
+
+    expected = signature_header.removeprefix("sha256=")
+    computed = hmac.new(app_secret.encode(), body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, computed)
 
 
 def parse_inbound(payload: dict) -> list[InboundMessage]:
