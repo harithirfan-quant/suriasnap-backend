@@ -48,13 +48,28 @@ _FAQ_COMMANDS = {
     "menu", "faq", "help", "question", "questions", "tanya", "soalan", "info",
 }
 
+# Words that start a manual (no-bill) assessment.
+_MANUAL_COMMANDS = {
+    "manual", "manually", "no bill", "nobill", "tanpa bil", "masukkan manual",
+    "enter", "type", "input", "taip",
+}
+
 INTRO = (
     "👋 Hi! I'm *SuriaSnap*.\n\n"
-    "Send me a photo or PDF of your latest *electricity bill* and I'll estimate your "
-    "rooftop solar size, monthly savings, payback period, and CO2 reduction — "
-    "free, in under a minute.\n\n"
-    "You can also *ask me anything* about solar, Solar ATAP, SEDA or your utility — or type "
-    "*menu* for common questions."
+    "📄 *Option 1 — Snap your bill:* Send a photo or PDF of your latest electricity bill "
+    "and I'll read your usage automatically.\n\n"
+    "✏️ *Option 2 — Enter manually:* Type *manual* and I'll walk you through a few quick "
+    "questions instead.\n\n"
+    "Either way you'll get your rooftop solar estimate — system size, monthly savings, "
+    "payback period, and CO₂ reduction — free, in under a minute.\n\n"
+    "Type *menu* for common questions about solar."
+)
+
+MANUAL_INTRO = (
+    "✏️ No problem — let's do it manually!\n\n"
+    "I'll ask you 3 quick things and give you your solar estimate right away.\n\n"
+    "*Step 1 of 3:* What is your average *monthly electricity usage* in kWh?\n"
+    "(Check a recent bill or your utility's app — e.g. *450*)"
 )
 
 
@@ -90,6 +105,17 @@ def _send_faq_menu(phone: str) -> None:
 
 def _is_greeting(text: str) -> bool:
     return text.strip().lower() in _GREETINGS
+
+
+def _is_manual_command(text: str) -> bool:
+    t = text.strip().lower()
+    return t in _MANUAL_COMMANDS or t.startswith("manual")
+
+
+def _start_manual(phone: str) -> None:
+    store.set_pending(phone, {})
+    store.set_state(phone, states.WAITING_FOR_KWH)
+    _send(phone, MANUAL_INTRO)
 
 
 def _parse_number(text: str) -> float | None:
@@ -159,6 +185,11 @@ def _route(phone: str, msg: InboundMessage) -> None:
     # FAQ menu command — free, no Claude call.
     if msg.msg_type == "text" and text.lower() in _FAQ_COMMANDS:
         _send_faq_menu(phone)
+        return
+
+    # Manual assessment — user wants to enter kWh / state / roof without a bill.
+    if msg.msg_type == "text" and _is_manual_command(text):
+        _start_manual(phone)
         return
 
     # User tapped an FAQ row → canned answer (free).

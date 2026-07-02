@@ -97,7 +97,7 @@ A = "60123000001"
 
 send(A, text="hi")
 check("A: greeting → WAITING_FOR_BILL", state_of(A) == states.WAITING_FOR_BILL)
-check("A: intro mentions TNB bill", "TNB bill" in SENT[-1])
+check("A: intro mentions manual option", "manual" in SENT[-1].lower())
 
 send(A, media=True)
 check("A: bill read, state+kwh known → asks ROOF", state_of(A) == states.WAITING_FOR_ROOF)
@@ -195,6 +195,30 @@ check("D: 'Pulau Pinang' normalises to Penang", pin["requested_state"] == "Penan
 bad = inst.find_installers("Atlantis")
 check("D: unknown state is reported as unresolved",
       not bad["resolved"] and bad["count"] == 0)
+
+# ── Run E: manual assessment (no bill) ───────────────────────────────────────
+print("\n=== Run E: manual assessment ===")
+SENT.clear()
+E = "60123000005"
+send(E, text="hi")
+check("E: greeting → WAITING_FOR_BILL", state_of(E) == states.WAITING_FOR_BILL)
+
+SENT.clear()
+send(E, text="manual")
+check("E: 'manual' → WAITING_FOR_KWH", state_of(E) == states.WAITING_FOR_KWH)
+check("E: manual intro asks for kWh", any("kWh" in m or "kwh" in m.lower() for m in SENT))
+
+send(E, text="380")
+check("E: kWh given → WAITING_FOR_STATE", state_of(E) == states.WAITING_FOR_STATE)
+
+send(E, text="Johor")
+check("E: state given → WAITING_FOR_ROOF", state_of(E) == states.WAITING_FOR_ROOF)
+
+send(E, text="45")
+check("E: roof given → DONE", state_of(E) == states.DONE)
+summaryE = next((m for m in SENT if "Solar Estimate" in m), "")
+check("E: summary shows Johor", "Johor" in summaryE)
+check("E: summary shows 380 kWh", "380 kWh" in summaryE)
 
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")
