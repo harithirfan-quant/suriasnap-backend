@@ -2,6 +2,10 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from app.rate_limit import limiter
 from app.routers import assessment, bill, installers, report, whatsapp
 from app.conversations import store
 
@@ -12,6 +16,13 @@ app = FastAPI(
     description="AI solar assessment backend for Malaysian homes",
     version="1.0.0",
 )
+
+# Rate limiting — CORS only stops browsers, not curl/scripts, and the bill
+# scan endpoint calls paid Claude Vision per request. Keyed by client IP;
+# fine at MVP scale, no Redis needed (in-memory, per-process).
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 
 @app.on_event("startup")

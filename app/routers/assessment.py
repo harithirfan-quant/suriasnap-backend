@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
+
+from app.rate_limit import limiter
 from app.services import solar_calc
 
 router = APIRouter()
@@ -28,7 +30,8 @@ class AssessResponse(BaseModel):
 
 
 @router.post("/assess", response_model=AssessResponse)
-def assess(payload: AssessRequest):
+@limiter.limit("60/hour")
+def assess(request: Request, payload: AssessRequest):
     if payload.state not in VALID_STATES:
         raise HTTPException(
             status_code=422,

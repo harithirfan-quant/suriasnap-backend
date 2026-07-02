@@ -265,6 +265,18 @@ def log_message(
         )
 
 
+def count_messages_since(phone: str, message_type: str, since_iso: str) -> int:
+    """Count outbound messages of a given type sent to `phone` since a
+    timestamp — used to cap paid Claude calls per phone number per day."""
+    with _conn() as conn:
+        row = conn.execute(
+            "SELECT COUNT(*) AS n FROM messages WHERE phone_number = ? "
+            "AND direction = 'out' AND message_type = ? AND created_at >= ?",
+            (phone, message_type, since_iso),
+        ).fetchone()
+        return row["n"] if row else 0
+
+
 def already_processed(wa_message_id: str | None) -> bool:
     """True if we've already logged this inbound wamid (Meta retries webhooks)."""
     if not wa_message_id:

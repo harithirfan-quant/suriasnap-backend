@@ -15,6 +15,7 @@ import logging
 import os
 import re
 import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from app.conversations import faq, states, store
@@ -34,6 +35,11 @@ MEDIA_DIR = os.getenv("MEDIA_DIR", "media")
 
 CO2_PER_TREE_KG = 22
 DEFAULT_ROOF_HINT = 40  # m², a typical Malaysian terrace — suggested if unsure
+
+# Free-text questions call Claude Haiku (small cost per call). Capped per
+# phone number per rolling 24h so one number can't run up the API bill —
+# the FAQ menu, greeting, and bill scan all stay free regardless.
+ASSISTANT_DAILY_CAP = int(os.getenv("ASSISTANT_DAILY_CAP", "20"))
 
 # SEDA's official registered PV service provider directory (verified 200 OK).
 SEDA_RPVSP_URL = "https://www.seda.gov.my/directory/registered-pv-service-provider-directory/"
@@ -75,13 +81,13 @@ MANUAL_INTRO = (
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
-def _send(phone: str, body: str) -> None:
+def _send(phone: str, body: str, message_type: str = "text") -> None:
     """Send text and log it; never let a send failure crash the flow."""
     try:
         wa.send_text(phone, body)
     except Exception:
         logger.exception("Failed to send text to %s", phone)
-    store.log_message(phone, "out", "text", body)
+    store.log_message(phone, "out", message_type, body)
 
 
 def _send_faq_menu(phone: str) -> None:
@@ -256,7 +262,18 @@ def _handle_text(phone: str, state: str, text: str) -> None:
     # assistant answer (solar / SuriaSnap topics only). Cheap Claude Haiku call;
     # off-topic messages are politely declined by the system prompt.
     store.set_state(phone, states.WAITING_FOR_BILL)
-    _send(phone, assistant.answer_question(text))
+
+    since = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+    asked_today = store.count_messages_since(phone, "assistant", since)
+    if asked_today >= ASSISTANT_DAILY_CAP:
+        _send(
+            phone,
+            "You've hit today's question limit 🙏. Type *menu* for common questions, "
+            "or send your *electricity bill* for a free estimate — that's always available.",
+        )
+        return
+
+    _send(phone, assistant.answer_question(text), message_type="assistant")
 
 
 def _handle_bill(phone: str, msg: InboundMessage) -> None:

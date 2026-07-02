@@ -177,6 +177,21 @@ SENT.clear()
 send(C, interactive_id="unknown_row")
 check("C: unknown FAQ id re-sends the menu", any(m.startswith("[LIST") for m in SENT))
 
+# ── Run C2: assistant daily cap ───────────────────────────────────────────────
+print("\n=== Run C2: assistant daily cap ===")
+orchestrator.ASSISTANT_DAILY_CAP = 3
+C2 = "60123000004"
+for i in range(orchestrator.ASSISTANT_DAILY_CAP):
+    SENT.clear()
+    send(C2, text=f"question number {i}")
+    check(f"C2: question {i} answered normally", any(m.startswith("[ANSWER:") for m in SENT))
+
+SENT.clear()
+send(C2, text="one question too many")
+check("C2: over the cap → polite limit message, no Claude call",
+      not any(m.startswith("[ANSWER:") for m in SENT) and any("limit" in m.lower() for m in SENT))
+orchestrator.ASSISTANT_DAILY_CAP = 20  # restore default for any later runs
+
 # ── Run D: installer lookup service ──────────────────────────────────────────
 print("\n=== Run D: installer lookup ===")
 from app.services import installers as inst

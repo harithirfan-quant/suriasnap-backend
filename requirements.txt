@@ -10,3 +10,4 @@ anthropic
 python-dotenv
 reportlab
 psycopg2-binary
+slowapi

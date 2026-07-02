@@ -1,9 +1,10 @@
 import io
 
-from fastapi import APIRouter, File, HTTPException, UploadFile
+from fastapi import APIRouter, File, HTTPException, Request, UploadFile
 from pydantic import BaseModel
 from PIL import Image
 
+from app.rate_limit import limiter
 from app.services import ocr_service
 
 router = APIRouter()
@@ -36,7 +37,8 @@ def _pdf_to_image(contents: bytes) -> Image.Image:
 
 
 @router.post("/scan-bill", response_model=BillScanResponse)
-async def scan_bill(file: UploadFile = File(...)):
+@limiter.limit("10/hour")
+async def scan_bill(request: Request, file: UploadFile = File(...)):
     if file.content_type not in ALLOWED_TYPES:
         raise HTTPException(
             status_code=415,
