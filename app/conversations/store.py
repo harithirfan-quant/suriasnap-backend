@@ -1,10 +1,14 @@
 """
-Minimal SQLite persistence for the WhatsApp conversation flow.
+Persistence for the WhatsApp conversation flow — SQLite locally/in tests,
+Postgres in production when DATABASE_URL is set.
 
-Uses only the Python standard library (`sqlite3`) — no ORM, no DB server, no
-extra dependency. A new connection is opened per operation, which is perfectly
-fine at WhatsApp-MVP volume and avoids cross-thread connection issues when
-FastAPI runs background tasks in its threadpool.
+On Render's free tier, local disk (including a SQLite file) is wiped on every
+deploy and on wake from sleep, which silently resets any in-progress WhatsApp
+conversation. Setting DATABASE_URL (a free Neon/Supabase Postgres instance)
+switches this module to Postgres with no other code changes required —
+everything downstream of `_conn()` uses the same `? `placeholders and
+dict-like rows either way. If DATABASE_URL is unset, behaviour is unchanged
+from before: a local SQLite file, fine for local dev and the test suite.
 
 Tables (kept intentionally small):
     contacts          — one row per phone number + current conversation state
@@ -23,9 +27,14 @@ from app.conversations import states
 
 logger = logging.getLogger("suriasnap.store")
 
-# Default lives at the repo root; override with SQLITE_DB_PATH. On Render's free
-# tier this file is ephemeral (resets on deploy/sleep) — acceptable for an MVP.
+# Default lives at the repo root; override with SQLITE_DB_PATH. Only used
+# when DATABASE_URL is unset (local dev / tests).
 DB_PATH = os.getenv("SQLITE_DB_PATH", "suriasnap.db")
+
+# When set (a Postgres connection string, e.g. from Neon or Supabase), all
+# persistence goes through Postgres instead of the ephemeral local SQLite
+# file. This is what makes conversation state survive Render deploys/sleeps.
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # How long to keep message logs and bill-extraction records, per our Privacy
 # Notice ("deleted on a short, rolling basis"). Override with RETENTION_DAYS.
@@ -36,53 +45,138 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
-def _conn() -> sqlite3.Connection:
+class _Conn:
+    """
+    Thin wrapper giving SQLite and Postgres the same call surface used
+    throughout this module: `conn.execute(sql, params).fetchone()/.fetchall()
+    /.rowcount`, plus a context manager that commits on success, rolls back
+    on exception, and always closes the connection (SQLite's own `with conn:`
+    only commits — it never closes, which is a real connection leak against
+    Postgres's much lower connection limits on free tiers).
+
+    Query strings are written once, using SQLite's `?` placeholder; for
+    Postgres they're translated to `%s` before executing. None of our SQL
+    contains a literal `?` outside of a placeholder, so this is a safe 1:1
+    swap.
+    """
+
+    def __init__(self, raw, backend: str):
+        self._raw = raw
+        self.backend = backend
+
+    def execute(self, sql: str, params: tuple = ()):
+        if self.backend == "postgres":
+            sql = sql.replace("?", "%s")
+        cur = self._raw.cursor()
+        cur.execute(sql, params)
+        return cur
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if exc_type is None:
+            self._raw.commit()
+        else:
+            self._raw.rollback()
+        self._raw.close()
+        return False
+
+
+def _conn() -> _Conn:
+    if DATABASE_URL:
+        import psycopg2
+        import psycopg2.extras
+
+        raw = psycopg2.connect(DATABASE_URL, cursor_factory=psycopg2.extras.RealDictCursor)
+        return _Conn(raw, "postgres")
+
     Path(DB_PATH).parent.mkdir(parents=True, exist_ok=True)
-    conn = sqlite3.connect(DB_PATH, timeout=10)
-    conn.row_factory = sqlite3.Row
-    return conn
+    raw = sqlite3.connect(DB_PATH, timeout=10)
+    raw.row_factory = sqlite3.Row
+    return _Conn(raw, "sqlite")
+
+
+_SQLITE_SCHEMA = """
+CREATE TABLE IF NOT EXISTS contacts (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    phone_number  TEXT UNIQUE NOT NULL,
+    name          TEXT,
+    current_state TEXT NOT NULL DEFAULT 'NEW',
+    pending_json  TEXT NOT NULL DEFAULT '{}',
+    created_at    TEXT NOT NULL,
+    updated_at    TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS messages (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    phone_number    TEXT NOT NULL,
+    direction       TEXT NOT NULL,
+    message_type    TEXT,
+    text            TEXT,
+    media_path      TEXT,
+    wa_message_id   TEXT,
+    created_at      TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS bill_extractions (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    phone_number    TEXT NOT NULL,
+    raw_file_path   TEXT,
+    extraction_json TEXT NOT NULL,
+    confidence      REAL,
+    created_at      TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_messages_wamid ON messages (wa_message_id);
+"""
+
+# Same shape, Postgres syntax: SERIAL instead of INTEGER PRIMARY KEY AUTOINCREMENT.
+_POSTGRES_SCHEMA = """
+CREATE TABLE IF NOT EXISTS contacts (
+    id            SERIAL PRIMARY KEY,
+    phone_number  TEXT UNIQUE NOT NULL,
+    name          TEXT,
+    current_state TEXT NOT NULL DEFAULT 'NEW',
+    pending_json  TEXT NOT NULL DEFAULT '{}',
+    created_at    TEXT NOT NULL,
+    updated_at    TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS messages (
+    id              SERIAL PRIMARY KEY,
+    phone_number    TEXT NOT NULL,
+    direction       TEXT NOT NULL,
+    message_type    TEXT,
+    text            TEXT,
+    media_path      TEXT,
+    wa_message_id   TEXT,
+    created_at      TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS bill_extractions (
+    id              SERIAL PRIMARY KEY,
+    phone_number    TEXT NOT NULL,
+    raw_file_path   TEXT,
+    extraction_json TEXT NOT NULL,
+    confidence      REAL,
+    created_at      TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_messages_wamid ON messages (wa_message_id);
+"""
 
 
 def init_db() -> None:
     """Create tables if they don't exist. Safe to call on every startup."""
     with _conn() as conn:
-        conn.executescript(
-            """
-            CREATE TABLE IF NOT EXISTS contacts (
-                id            INTEGER PRIMARY KEY AUTOINCREMENT,
-                phone_number  TEXT UNIQUE NOT NULL,
-                name          TEXT,
-                current_state TEXT NOT NULL DEFAULT 'NEW',
-                pending_json  TEXT NOT NULL DEFAULT '{}',
-                created_at    TEXT NOT NULL,
-                updated_at    TEXT NOT NULL
-            );
-
-            CREATE TABLE IF NOT EXISTS messages (
-                id              INTEGER PRIMARY KEY AUTOINCREMENT,
-                phone_number    TEXT NOT NULL,
-                direction       TEXT NOT NULL,          -- 'in' | 'out'
-                message_type    TEXT,                   -- text | image | document | ...
-                text            TEXT,
-                media_path      TEXT,
-                wa_message_id   TEXT,                   -- Meta's wamid, for dedupe
-                created_at      TEXT NOT NULL
-            );
-
-            CREATE TABLE IF NOT EXISTS bill_extractions (
-                id             INTEGER PRIMARY KEY AUTOINCREMENT,
-                phone_number   TEXT NOT NULL,
-                raw_file_path  TEXT,
-                extraction_json TEXT NOT NULL,
-                confidence     REAL,
-                created_at     TEXT NOT NULL
-            );
-
-            CREATE INDEX IF NOT EXISTS idx_messages_wamid
-                ON messages (wa_message_id);
-            """
-        )
-    logger.info("SQLite ready at %s", DB_PATH)
+        if conn.backend == "postgres":
+            cur = conn._raw.cursor()
+            for stmt in _POSTGRES_SCHEMA.strip().split(";"):
+                stmt = stmt.strip()
+                if stmt:
+                    cur.execute(stmt)
+        else:
+            conn._raw.executescript(_SQLITE_SCHEMA)
+    logger.info(
+        "%s ready at %s",
+        "Postgres" if DATABASE_URL else "SQLite",
+        "(DATABASE_URL)" if DATABASE_URL else DB_PATH,
+    )
 
 
 # ── contacts ──────────────────────────────────────────────────────────────────

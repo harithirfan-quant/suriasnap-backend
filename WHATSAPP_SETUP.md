@@ -27,10 +27,34 @@ dashboard** in production. Never commit real values.
 | `WHATSAPP_PHONE_NUMBER_ID` | ✅ | On the same API Setup page — the **Phone number ID** (a long number, *not* the phone number itself). |
 | `WHATSAPP_API_VERSION` | ⬜ | Graph API version. Defaults to `v21.0`. |
 | `WHATSAPP_DRY_RUN` | ⬜ | `true` = log outbound replies instead of calling Meta (local testing without a token). Leave `false`/unset in prod. |
-| `SQLITE_DB_PATH` | ⬜ | Conversation DB path. Default `suriasnap.db`. |
-| `MEDIA_DIR` | ⬜ | Where downloaded bills are saved. Default `media/`. |
+| `DATABASE_URL` | ⬜* | Postgres connection string. **Set this in production** — see below. Unset = falls back to local SQLite (fine for dev, ephemeral on Render). |
+| `SQLITE_DB_PATH` | ⬜ | SQLite path, only used when `DATABASE_URL` is unset. Default `suriasnap.db`. |
+| `MEDIA_DIR` | ⬜ | Where downloaded bills are saved (deleted right after OCR). Default `media/`. |
+| `RETENTION_DAYS` | ⬜ | Days to keep message logs / bill extractions before auto-purge. Default `30`. |
 
 > **No `ANTHROPIC_API_KEY` needed** — Claude Vision is not used in v1.
+
+---
+
+## STEP 4b — Persistent storage (production)
+
+Render's free tier wipes local disk on every deploy and every sleep→wake
+cycle. Without `DATABASE_URL`, that means an in-progress WhatsApp
+conversation (or the dedupe table, or the FAQ history) can reset mid-flow.
+Fix it once with a free Postgres database:
+
+1. Create a free project at **[neon.tech](https://neon.tech)** or
+   **[supabase.com](https://supabase.com)** (no credit card required on
+   either free tier).
+2. Copy the connection string (starts with `postgresql://…`).
+3. In the **Render dashboard** → your service → **Environment**, add
+   `DATABASE_URL` with that value.
+4. Redeploy. On the next startup the backend creates its tables in Postgres
+   automatically (`store.init_db()` runs at boot either way) — no manual
+   migration step.
+
+No other code or config changes are needed; the backend detects
+`DATABASE_URL` and switches over automatically.
 
 ---
 

@@ -44,6 +44,15 @@ services:
       - key: WHATSAPP_APP_SECRET
         sync: false
 
+      # ── Persistence ───────────────────────────────────────────────────────
+      # Postgres connection string (e.g. a free Neon or Supabase project).
+      # Render's free tier wipes local disk on every deploy/sleep-wake, which
+      # silently resets any in-progress WhatsApp conversation if left on
+      # SQLite. Set this and the backend automatically switches to Postgres
+      # — no other config needed. Leave unset only for quick local testing.
+      - key: DATABASE_URL
+        sync: false
+
       # ── Claude Vision (primary bill OCR) ────────────────────────────────
       # If unset, the backend falls back to local Tesseract OCR automatically.
       - key: ANTHROPIC_API_KEY
