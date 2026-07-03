@@ -28,10 +28,14 @@ FAQ = [
         "title": "What is Solar ATAP?",
         "desc": "Solar ATAP programme explained",
         "answer": (
-            "*Solar ATAP* (Skim Suria Atap) is SEDA's programme that lets you sell "
-            "surplus solar power back to your utility (TNB / SESB / SESCO). Export rates: *RM 0.27/kWh* (≤1,500 kWh/month) "
-            "or *RM 0.37/kWh* (>1,500 kWh/month). Your panels offset your own usage first; "
-            "any excess is exported and credited on your next electricity bill. 10-year contract, no quota limits."
+            "*Solar ATAP* (Skim Suria Atap) is SEDA's programme that lets *TNB* customers "
+            "(Peninsular Malaysia + Labuan) sell surplus solar power back to the grid. Export rates: "
+            "*RM 0.27/kWh* (≤1,500 kWh/month) or *RM 0.37/kWh* (>1,500 kWh/month). Your panels offset "
+            "your own usage first; any excess is exported and credited on your next bill. 10-year "
+            "contract, no quota limits.\n\n"
+            "*Sabah (SESB)* and *Sarawak (SESCO)* aren't on Solar ATAP — they each run their own "
+            "separate net-metering scheme. Sarawak also offers a one-off subsidy (RM8,000–12,000) "
+            "toward install cost. Send your bill and I'll tell you exactly what applies to you."
         ),
     },
     {

@@ -314,6 +314,37 @@ check("H: old message purged, recent one kept",
       "ancient message" not in [r[0] for r in remaining] and len(remaining) >= 1)
 check("H: old bill extraction purged", len(remaining_extractions) == 0)
 
+# ── Run I: Sabah/Sarawak use their own scheme, not Solar ATAP ────────────────
+print("\n=== Run I: SESB/SESCO scheme correctness ===")
+from app.services import solar_calc
+
+sabah_result = solar_calc.assess("Sabah", 400, 40, "South")
+check("I: Sabah scheme is SESB NEM, not Solar ATAP",
+      sabah_result["scheme_name"] == "SESB Net Energy Metering")
+
+sarawak_result = solar_calc.assess("Sarawak", 400, 40, "South")
+check("I: Sarawak scheme is Sarawak Energy NEM, not Solar ATAP",
+      sarawak_result["scheme_name"] == "Sarawak Energy Net Energy Metering (NEM)")
+
+selangor_result = solar_calc.assess("Selangor", 400, 40, "South")
+check("I: TNB territory still uses Solar ATAP",
+      selangor_result["scheme_name"] == "Solar ATAP")
+
+labuan_result = solar_calc.assess("Labuan", 400, 40, "South")
+check("I: Labuan (TNB territory) uses Solar ATAP",
+      labuan_result["scheme_name"] == "Solar ATAP")
+
+SENT.clear()
+I = "60123000009"
+send(I, text="hi")
+send(I, text="manual")
+send(I, text="400")
+send(I, text="Sabah")
+send(I, text="40")
+summaryI = next((m for m in SENT if "Solar Estimate" in m), "")
+check("I: Sabah WhatsApp summary mentions SESB scheme, not Solar ATAP",
+      "SESB Net Energy Metering" in summaryI and "Solar ATAP" not in summaryI)
+
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")
 SENT.clear()

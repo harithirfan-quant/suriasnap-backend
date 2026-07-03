@@ -190,9 +190,10 @@ def _savings_callout(styles: dict, data: dict, state: str = "") -> list:
         ]),
     )
     utility = utility_name(state)
+    scheme  = data.get("scheme_name", "Solar ATAP")
     why = Paragraph(
         f"<b>Why?</b> Right now about <b>RM {monthly:,.0f}/month</b> leaves your pocket for {utility}. "
-        "Solar offsets your usage first and exports the surplus for Solar ATAP credits, so most of that "
+        f"Solar offsets your usage first and exports the surplus for {scheme} credits, so most of that "
         "money stays with you instead. Panels run for 25+ years — every month you wait is a saving "
         "you don't get back.",
         styles["small"],
@@ -352,31 +353,59 @@ def _environmental_impact(styles: dict, data: dict) -> list:
     ]
 
 
-def _solar_atap_explainer(styles: dict, state: str = "") -> list:
-    """Brief Solar ATAP scheme description and export rates."""
+def _export_scheme_explainer(styles: dict, data: dict, state: str = "") -> list:
+    """
+    Export/net-metering scheme description — genuinely different mechanics
+    depending on utility, not just a rename:
+      - TNB territory (Peninsular + Labuan): Solar ATAP, a SEDA-administered
+        government feed-in tariff with published RM/kWh export rates.
+      - Sabah (SESB) / Sarawak (SESCO): their own separate net-metering
+        schemes, NOT Solar ATAP — SEDA has no jurisdiction there. Export
+        rates shown are an approximation (see tariffs.json sources); a
+        licensed installer should confirm exact terms before signing.
+    """
     utility = utility_name(state)
-    body = (
-        "The <b>Solar ATAP</b> (Skim Suria Atap) programme by SEDA Malaysia enables residential "
-        f"solar owners to sell surplus electricity back to {utility}. Export rates: "
-        "<b>RM 0.27 per kWh</b> (≤1,500 kWh/month consumption) or <b>RM 0.37 per kWh</b> "
-        "(>1,500 kWh/month consumption). Generation offsets your consumption first; "
-        "any excess is exported to the grid for credit on your next electricity bill. "
-        "10-year contract, no quota limits. System capacity is capped at your contracted demand or 12 kWp, whichever is lower."
-    )
+    scheme  = data.get("scheme_name", "Solar ATAP")
+
+    if scheme == "Solar ATAP":
+        body = (
+            "The <b>Solar ATAP</b> (Skim Suria Atap) programme by SEDA Malaysia enables residential "
+            f"solar owners to sell surplus electricity back to {utility}. Export rates: "
+            "<b>RM 0.27 per kWh</b> (≤1,500 kWh/month consumption) or <b>RM 0.37 per kWh</b> "
+            "(>1,500 kWh/month consumption). Generation offsets your consumption first; "
+            "any excess is exported to the grid for credit on your next electricity bill. "
+            "10-year contract, no quota limits. System capacity is capped at your contracted demand or 12 kWp, whichever is lower."
+        )
+    else:
+        export_rate = data.get("export_rate_rm", 0)
+        subsidy_note = (
+            " Sarawak Energy also offers a one-off cash subsidy toward install cost "
+            "(RM8,000–12,000 depending on system size) under its NEM Subsidy Scheme (NEMSS)."
+            if utility == "SESCO" else ""
+        )
+        body = (
+            f"<b>{utility} is not part of the Solar ATAP programme</b> — SEDA's Solar ATAP covers TNB's "
+            f"jurisdiction only (Peninsular Malaysia + Labuan). {utility} runs its own separate <b>{scheme}</b>: "
+            "generation offsets your consumption first, and surplus exported to the grid is credited at "
+            f"roughly <b>RM {export_rate:.2f} per kWh</b> (approximate — {utility} does not publish a "
+            "distinct export tariff the way Solar ATAP does; confirm exact terms with your installer or "
+            f"{utility} directly before signing).{subsidy_note}"
+        )
     return [
-        Paragraph("About Solar ATAP", styles["section"]),
+        Paragraph(f"About {scheme}", styles["section"]),
         HRFlowable(width="100%", thickness=1, color=TEAL_LIGHT, spaceAfter=6),
         Paragraph(body, styles["body"]),
     ]
 
 
-def _next_steps(styles: dict, state: str = "") -> list:
+def _next_steps(styles: dict, data: dict, state: str = "") -> list:
     utility = utility_name(state)
+    scheme  = data.get("scheme_name", "Solar ATAP")
     steps = [
         "1. Contact a <b>SEDA-registered installer</b> for a site survey and detailed quotation.",
-        "2. Submit your Solar ATAP application via the <b>SEDA Malaysia portal</b>.",
+        f"2. Submit your {scheme} application via {'the <b>SEDA Malaysia portal</b>' if scheme == 'Solar ATAP' else f'<b>{utility}</b>'}.",
         f"3. After approval, your installer connects the system and {utility} installs a bidirectional meter.",
-        "4. Start generating clean energy and earning Solar ATAP credits on your monthly bill.",
+        f"4. Start generating clean energy and earning {scheme} credits on your monthly bill.",
     ]
     items = [Paragraph(s, styles["body"]) for s in steps]
     note  = Paragraph(
@@ -440,8 +469,8 @@ def generate_report(assessment_data: dict) -> bytes:
     story += _design_preview(styles, assessment_data)
     story += _financial_summary(styles, assessment_data)
     story += _environmental_impact(styles, assessment_data)
-    story += _solar_atap_explainer(styles, state)
-    story += _next_steps(styles, state)
+    story += _export_scheme_explainer(styles, assessment_data, state)
+    story += _next_steps(styles, assessment_data, state)
     story += _footer(styles)
 
     doc.build(story)

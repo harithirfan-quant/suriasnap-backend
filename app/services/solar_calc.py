@@ -2,6 +2,8 @@ import json
 import math
 from pathlib import Path
 
+from app.services.utils import utility_name
+
 DATA_DIR = Path(__file__).parent.parent / "data"
 
 with open(DATA_DIR / "states.json") as f:
@@ -46,20 +48,69 @@ def _tnb_bill(consumption_kwh: float) -> float:
     return energy + capacity + network + retail
 
 
+def _sesb_bill(consumption_kwh: float) -> float:
+    """Approximate SESB (Sabah) monthly bill using their published average
+    domestic rate — see tariffs.json["sesb"]["_source"] for caveats."""
+    return consumption_kwh * TARIFFS["sesb"]["flat_rate_rm"]
+
+
+def _sesco_rate_for(consumption_kwh: float) -> float:
+    """SESCO's domestic tariff is a stepped-average design: whichever
+    bracket total monthly consumption falls into sets the rate for ALL
+    units that month (not a marginal block system like TNB's)."""
+    sesco = TARIFFS["sesco"]
+    for bracket in sesco["brackets_rm"]:
+        if consumption_kwh <= bracket["max_kwh"]:
+            return bracket["rate_rm"]
+    return sesco["above_800_rate_rm"]
+
+
+def _sesco_bill(consumption_kwh: float) -> float:
+    """Approximate SESCO (Sarawak) monthly bill — see
+    tariffs.json["sesco"]["_source"] for caveats (temporary 25% discount
+    running Apr-Dec 2026 is NOT applied here)."""
+    return consumption_kwh * _sesco_rate_for(consumption_kwh)
+
+
+def _bill_and_scheme(state: str) -> tuple:
+    """
+    Return (bill_fn, export_rate_fn, scheme_name) for the utility serving
+    `state`. TNB territory (Peninsular + Labuan) is on Solar ATAP, a
+    government feed-in tariff. Sabah (SESB) and Sarawak (SESCO) are NOT on
+    Solar ATAP — they run their own separate net-metering schemes, which we
+    approximate as 1:1 crediting at the same tariff used for consumption
+    (no separate published export rate found for either).
+    """
+    utility = utility_name(state)
+
+    if utility == "SESB":
+        rate = TARIFFS["sesb"]["flat_rate_rm"]
+        return _sesb_bill, (lambda consumption_kwh: rate), TARIFFS["sesb"]["scheme_name"]
+
+    if utility == "SESCO":
+        # Net-metered exports offset at the rate for the consumer's own
+        # (pre-solar) usage level — the closest available proxy for "their
+        # normal rate" absent a published export-specific rate.
+        return _sesco_bill, (lambda consumption_kwh: _sesco_rate_for(consumption_kwh)), TARIFFS["sesco"]["scheme_name"]
+
+    atap = TARIFFS["solar_atap"]
+
+    def _atap_export_rate(consumption_kwh: float) -> float:
+        return atap["export_rate_low_rm"] if consumption_kwh <= atap["threshold_kwh"] else atap["export_rate_high_rm"]
+
+    return _tnb_bill, _atap_export_rate, atap["scheme_name"]
+
+
 def assess(
     state: str,
     monthly_consumption_kwh: float,
     roof_area_sqm: float,
     roof_orientation: str,
 ) -> dict:
-    ghi               = STATES[state]["ghi"]
-    orientation_factor = ORIENTATION_FACTORS[roof_orientation]
-    atap              = TARIFFS["solar_atap"]
-    export_rate       = (
-        atap["export_rate_low_rm"]
-        if monthly_consumption_kwh <= atap["threshold_kwh"]
-        else atap["export_rate_high_rm"]
-    )
+    ghi                 = STATES[state]["ghi"]
+    orientation_factor  = ORIENTATION_FACTORS[roof_orientation]
+    bill_fn, export_rate_fn, scheme_name = _bill_and_scheme(state)
+    export_rate         = export_rate_fn(monthly_consumption_kwh)
 
     # --- System sizing ---
     panel_area_sqm      = PANEL_WATTAGE / (1000 * PANEL_EFFICIENCY)   # ~1.905 m²
@@ -72,9 +123,9 @@ def assess(
     monthly_gen_kwh     = daily_gen_kwh * DAYS_PER_MONTH
 
     # --- Monthly savings ---
-    old_bill            = _tnb_bill(monthly_consumption_kwh)
+    old_bill            = bill_fn(monthly_consumption_kwh)
     net_consumption     = max(0.0, monthly_consumption_kwh - monthly_gen_kwh)
-    new_bill            = _tnb_bill(net_consumption)
+    new_bill            = bill_fn(net_consumption)
     export_kwh          = max(0.0, monthly_gen_kwh - monthly_consumption_kwh)
     export_revenue      = export_kwh * export_rate
     monthly_savings_rm  = (old_bill - new_bill) + export_revenue
@@ -104,4 +155,5 @@ def assess(
         "payback_years":           round(payback_years, 1),
         "roi_25_year_rm":          round(roi_25_year_rm, 2),
         "export_rate_rm":          export_rate,
+        "scheme_name":             scheme_name,
     }

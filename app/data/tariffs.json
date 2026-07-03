@@ -1,4 +1,6 @@
 {
+  "_note": "Solar ATAP (GP/ST/No.60/2025) covers TNB's jurisdiction only — Peninsular Malaysia + Labuan. Sabah (SESB) and Sarawak (SESCO/Sarawak Energy) run their own separate net-metering schemes, not Solar ATAP. See app/services/solar_calc.py for which fields apply where.",
+
   "tnb": {
     "energy_charge": {
       "first_1500_kwh_rm": 0.2703,
@@ -12,6 +14,31 @@
   "solar_atap": {
     "export_rate_low_rm": 0.2700,
     "export_rate_high_rm": 0.3700,
-    "threshold_kwh": 1500
+    "threshold_kwh": 1500,
+    "scheme_name": "Solar ATAP"
+  },
+
+  "sesb": {
+    "_source": "SESB average base domestic tariff, revised 1 Feb 2026 (sesb.com.my). SESB publishes a block schedule we could not machine-read reliably as of this update — using the published average rate as a single flat approximation. Verify exact block rates at sesb.com.my before quoting a customer.",
+    "flat_rate_rm": 0.3970,
+    "scheme_name": "SESB Net Energy Metering",
+    "export_note": "SESB runs its own Net Energy Metering (NEM) scheme, separate from Solar ATAP. Exported electricity nets against consumption at the prevailing domestic rate (no separate published feed-in/export tariff found) — modelled here as 1:1 net metering at the flat domestic rate."
+  },
+
+  "sesco": {
+    "_source": "Sarawak Energy domestic tariff block table (sarawakenergy.com), stepped-average design: total monthly consumption falling in a bracket is billed at that bracket's flat rate for all units. A temporary 25% domestic discount was announced for Apr-Dec 2026 — NOT applied here. Verify current rate/discount status at sarawakenergy.com before quoting a customer.",
+    "brackets_rm": [
+      {"max_kwh": 150,  "rate_rm": 0.18},
+      {"max_kwh": 200,  "rate_rm": 0.22},
+      {"max_kwh": 300,  "rate_rm": 0.25},
+      {"max_kwh": 400,  "rate_rm": 0.27},
+      {"max_kwh": 500,  "rate_rm": 0.295},
+      {"max_kwh": 700,  "rate_rm": 0.30},
+      {"max_kwh": 800,  "rate_rm": 0.305}
+    ],
+    "above_800_rate_rm": 0.305,
+    "scheme_name": "Sarawak Energy Net Energy Metering (NEM)",
+    "nemss_subsidy_note": "Sarawak Energy also offers a one-off NEM Subsidy Scheme (NEMSS) toward install cost: RM8,000 (2-3.5kWac), RM10,000 (>3.5-6kWac), RM12,000 (>6-50kWac) — a capital subsidy, not an export tariff.",
+    "export_note": "Sarawak Energy's NEM nets exported electricity against consumption at the prevailing domestic rate (no separate published feed-in/export tariff found) — modelled here as 1:1 net metering at the applicable bracket rate."
   }
 }

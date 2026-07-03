@@ -430,7 +430,7 @@ def _format_summary(state, kwh, roof, orientation, r: dict) -> str:
         f"{r['num_panels_400w']} × 400W · 15° tilt · {orientation}-facing · "
         f"~{sy:,} kWh/kWp/yr — see the design image & full report below.\n\n"
         + _installer_block(state)
-        + f"_Based on {utility_name(state)} 2025/26 tariffs & SEDA Solar ATAP rates. Get a free site survey "
+        + f"_Based on {utility_name(state)} 2025/26 tariffs & {r['scheme_name']} rates. Get a free site survey "
         "from an installer for exact figures._"
     )
 
