@@ -55,12 +55,13 @@ SENT: list[str] = []
 wa.send_text = lambda to, body: SENT.append(body)
 wa.send_document = lambda to, mid, fn, caption=None: SENT.append(f"[DOC {fn}] {caption}")
 wa.send_image = lambda to, mid, caption=None: SENT.append(f"[IMG] {caption}")
-wa.send_list = lambda to, body, button, rows, section_title="", header=None: SENT.append(f"[LIST {len(rows)} rows]")
+wa.send_list = lambda to, body, button, rows, section_title="", header=None: SENT.append(f"[LIST {len(rows)} rows] {body}")
+wa.send_buttons = lambda to, body, buttons, header=None: SENT.append(body)
 wa.upload_media = lambda b, fn, mime: "FAKE_MEDIA_ID"
 wa.download_media = lambda mid: (b"fake-bytes", "image/jpeg")
 reports.generate_pdf_bytes = lambda *a, **k: b"%PDF-fake"
 design_preview.render_design_png = lambda *a, **k: b"PNG"
-assistant.answer_question = lambda q: f"[ANSWER:{q}]"   # no real Claude call in tests
+assistant.answer_question = lambda q, lang="en": f"[ANSWER:{lang}:{q}]"   # no real Claude call in tests
 
 _n = 0
 def send(phone, *, text=None, media=False, interactive_id=None):
@@ -344,6 +345,62 @@ send(I, text="40")
 summaryI = next((m for m in SENT if "Solar Estimate" in m), "")
 check("I: Sabah WhatsApp summary mentions SESB scheme, not Solar ATAP",
       "SESB Net Energy Metering" in summaryI and "Solar ATAP" not in summaryI)
+
+# ── Run J: BM language switching ──────────────────────────────────────────────
+print("\n=== Run J: BM language switch ===")
+J = "60123000010"
+send(J, text="hi")
+check("J: contact defaults to English", store.get_contact(J)["lang"] == "en")
+
+SENT.clear()
+send(J, text="bm")
+check("J: 'bm' switches language", store.get_contact(J)["lang"] == "bm")
+check("J: BM switch confirmation shown", "Bahasa Malaysia" in SENT[-1])
+
+SENT.clear()
+send(J, text="manual")
+check("J: manual intro is in BM", "Langkah 1" in SENT[-1])
+
+send(J, text="380")
+check("J: kwh accepted, now waiting for state", state_of(J) == states.WAITING_FOR_STATE)
+
+SENT.clear()
+send(J, text="en")
+check("J: 'en' switches back to English", store.get_contact(J)["lang"] == "en")
+check("J: re-prompts the current step (state) in English after switch",
+      any(m.startswith("[LIST") for m in SENT))
+
+# ── Run K: region → state picker (interactive) ────────────────────────────────
+print("\n=== Run K: region/state picker ===")
+K = "60123000011"
+send(K, text="hi")
+send(K, text="manual")
+send(K, text="420")
+check("K: now waiting for state", state_of(K) == states.WAITING_FOR_STATE)
+
+SENT.clear()
+send(K, interactive_id="region_east_m")
+check("K: tapping a region sends the state list for that region",
+      any(m.startswith("[LIST") for m in SENT))
+
+send(K, interactive_id="state_Sabah")
+check("K: tapping a state resolves it and advances", state_of(K) == states.WAITING_FOR_ROOF)
+check("K: Sabah was recorded", store.get_pending(K).get("state") == "Sabah")
+
+send(K, text="35")
+check("K: roof given → DONE", state_of(K) == states.DONE)
+
+# ── Run L: intro buttons ───────────────────────────────────────────────────────
+print("\n=== Run L: intro buttons ===")
+L = "60123000012"
+send(L, text="hi")
+check("L: greeting sends interactive intro buttons",
+      any(m.startswith("👋") or "SuriaSnap" in m for m in SENT))
+
+SENT.clear()
+send(L, interactive_id="intro_manual")
+check("L: tapping 'Enter manually' button starts manual flow",
+      state_of(L) == states.WAITING_FOR_KWH)
 
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")

@@ -104,6 +104,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     name          TEXT,
     current_state TEXT NOT NULL DEFAULT 'NEW',
     pending_json  TEXT NOT NULL DEFAULT '{}',
+    lang          TEXT NOT NULL DEFAULT 'en',
     created_at    TEXT NOT NULL,
     updated_at    TEXT NOT NULL
 );
@@ -136,6 +137,7 @@ CREATE TABLE IF NOT EXISTS contacts (
     name          TEXT,
     current_state TEXT NOT NULL DEFAULT 'NEW',
     pending_json  TEXT NOT NULL DEFAULT '{}',
+    lang          TEXT NOT NULL DEFAULT 'en',
     created_at    TEXT NOT NULL,
     updated_at    TEXT NOT NULL
 );
@@ -172,6 +174,15 @@ def init_db() -> None:
                     cur.execute(stmt)
         else:
             conn._raw.executescript(_SQLITE_SCHEMA)
+
+    # Migration for DBs created before `lang` existed — both backends accept
+    # this exact syntax. Ignore the error if the column is already there.
+    try:
+        with _conn() as conn:
+            conn.execute("ALTER TABLE contacts ADD COLUMN lang TEXT NOT NULL DEFAULT 'en'")
+    except Exception:
+        pass
+
     logger.info(
         "%s ready at %s",
         "Postgres" if DATABASE_URL else "SQLite",
@@ -218,6 +229,14 @@ def set_state(phone: str, state: str) -> None:
         conn.execute(
             "UPDATE contacts SET current_state = ?, updated_at = ? WHERE phone_number = ?",
             (state, _now(), phone),
+        )
+
+
+def set_lang(phone: str, lang: str) -> None:
+    with _conn() as conn:
+        conn.execute(
+            "UPDATE contacts SET lang = ?, updated_at = ? WHERE phone_number = ?",
+            (lang, _now(), phone),
         )
 
 

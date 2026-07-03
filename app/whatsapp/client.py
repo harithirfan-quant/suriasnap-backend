@@ -120,6 +120,39 @@ def send_list(to: str, body: str, button: str, rows: list[dict],
     resp.raise_for_status()
 
 
+def send_buttons(to: str, body: str, buttons: list[dict], header: str | None = None) -> None:
+    """Send an interactive reply-button message (max 3 buttons; each button
+    id/title round-trips back as the tapped button's id via the webhook).
+    Each button dict is {id, title} — title must be <=20 chars (WhatsApp
+    Cloud API limit)."""
+    if _dry_run():
+        logger.info("[DRY_RUN] → %s: [buttons %s]", to, [b["title"] for b in buttons])
+        return
+
+    interactive = {
+        "type": "button",
+        "body": {"text": body},
+        "action": {"buttons": [
+            {"type": "reply", "reply": {"id": b["id"], "title": b["title"]}}
+            for b in buttons
+        ]},
+    }
+    if header:
+        interactive["header"] = {"type": "text", "text": header}
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "interactive",
+        "interactive": interactive,
+    }
+    url = f"{GRAPH_BASE}/{_phone_number_id()}/messages"
+    with httpx.Client(timeout=30) as client:
+        resp = client.post(url, headers=_auth_headers(), json=payload)
+    if resp.status_code >= 400:
+        logger.error("send_buttons failed (%s): %s", resp.status_code, resp.text)
+    resp.raise_for_status()
+
+
 def send_document(to: str, media_id: str, filename: str, caption: str | None = None) -> None:
     """Send a previously-uploaded document (PDF) by its media id."""
     if _dry_run():

@@ -44,29 +44,43 @@ _SYSTEM = (
     "Do not invent precise numbers you're unsure of; suggest an installer quote."
 )
 
-_FALLBACK = (
-    "I can help with questions about solar, SEDA, Solar ATAP, electricity bills and SuriaSnap. "
-    "Type *menu* for common questions, or send a photo of your *electricity bill* for a "
-    "free solar estimate."
-)
+_LANG_INSTRUCTION = {
+    "en": "Respond in English.",
+    "bm": "Respond in Bahasa Malaysia (Malay), natural and conversational — not a stiff translation.",
+}
+
+_FALLBACK = {
+    "en": (
+        "I can help with questions about solar, SEDA, Solar ATAP, electricity bills and SuriaSnap. "
+        "Type *menu* for common questions, or send a photo of your *electricity bill* for a "
+        "free solar estimate."
+    ),
+    "bm": (
+        "Saya boleh bantu dengan soalan tentang solar, SEDA, Solar ATAP, bil elektrik dan SuriaSnap. "
+        "Taip *menu* untuk soalan lazim, atau hantar foto *bil elektrik* anda untuk anggaran "
+        "solar percuma."
+    ),
+}
 
 
-def answer_question(question: str) -> str:
+def answer_question(question: str, lang: str = "en") -> str:
     """Answer a solar/SuriaSnap question. Best-effort: never raises."""
+    fallback = _FALLBACK.get(lang, _FALLBACK["en"])
     if not os.getenv("ANTHROPIC_API_KEY"):
-        return _FALLBACK
+        return fallback
     try:
         import anthropic
 
         client = anthropic.Anthropic()
+        system = _SYSTEM + "\n\n" + _LANG_INSTRUCTION.get(lang, _LANG_INSTRUCTION["en"])
         resp = client.messages.create(
             model=ASSISTANT_MODEL,
             max_tokens=350,
-            system=_SYSTEM,
+            system=system,
             messages=[{"role": "user", "content": question.strip()[:600]}],
         )
         text = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text").strip()
-        return text or _FALLBACK
+        return text or fallback
     except Exception:
         logger.exception("Assistant Q&A failed")
-        return _FALLBACK
+        return fallback
