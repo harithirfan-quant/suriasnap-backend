@@ -1,4 +1,6 @@
 import os
+from contextlib import asynccontextmanager
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,23 +13,11 @@ from app.conversations import store
 
 load_dotenv()
 
-app = FastAPI(
-    title="SuriaSnap API",
-    description="AI solar assessment backend for Malaysian homes",
-    version="1.0.0",
-)
 
-# Rate limiting — CORS only stops browsers, not curl/scripts, and the bill
-# scan endpoint calls paid Claude Vision per request. Keyed by client IP;
-# fine at MVP scale, no Redis needed (in-memory, per-process).
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-app.add_middleware(SlowAPIMiddleware)
-
-
-@app.on_event("startup")
-def _startup() -> None:
-    # Create the SQLite tables used by the WhatsApp conversation flow.
+@asynccontextmanager
+async def _lifespan(app: FastAPI):
+    # Create the tables used by the WhatsApp conversation flow (SQLite or
+    # Postgres, depending on DATABASE_URL).
     store.init_db()
 
     # Enforce our data-retention promise (see LegalPage / Privacy Notice) —
@@ -36,6 +26,23 @@ def _startup() -> None:
     # sleeps and wakes often, so startup fires regularly enough to matter.
     store.purge_old_data()
     store.purge_orphaned_media(os.getenv("MEDIA_DIR", "media"))
+
+    yield
+
+
+app = FastAPI(
+    title="SuriaSnap API",
+    description="AI solar assessment backend for Malaysian homes",
+    version="1.0.0",
+    lifespan=_lifespan,
+)
+
+# Rate limiting — CORS only stops browsers, not curl/scripts, and the bill
+# scan endpoint calls paid Claude Vision per request. Keyed by client IP;
+# fine at MVP scale, no Redis needed (in-memory, per-process).
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 _default_origins = "http://localhost:5173,http://localhost:3000"
 origins = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", _default_origins).split(",") if o.strip()]
