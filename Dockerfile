@@ -52,5 +52,10 @@ ENV PORT=8000 \
 
 EXPOSE ${PORT}
 
-# Use shell form so $PORT is expanded at container start
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
+# Use shell form so $PORT is expanded at container start.
+# --proxy-headers + --forwarded-allow-ips: Render terminates TLS at its proxy
+# and forwards the real client IP in X-Forwarded-For. Without these flags,
+# request.client.host is the proxy's IP for every request — which silently
+# turns the per-IP rate limits into one shared global bucket. Only Render's
+# proxy can reach the container, so trusting "*" is safe here.
+CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --forwarded-allow-ips "*"

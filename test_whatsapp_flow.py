@@ -402,6 +402,33 @@ send(L, interactive_id="intro_manual")
 check("L: tapping 'Enter manually' button starts manual flow",
       state_of(L) == states.WAITING_FOR_KWH)
 
+# ── Run M: oversized bill is rejected before OCR ─────────────────────────────
+print("\n=== Run M: oversized bill rejection ===")
+SENT.clear()
+M = "60123000013"
+send(M, text="hi")
+
+# Temporarily make download_media return an 11MB blob (> the 10MB cap).
+_orig_download = wa.download_media
+wa.download_media = lambda mid: (b"x" * (11 * 1024 * 1024), "image/jpeg")
+extraction_called = {"hit": False}
+_orig_extract = bill_extractor.extract_bill
+def _tracking_extract(path):
+    extraction_called["hit"] = True
+    return _orig_extract(path)
+bill_extractor.extract_bill = _tracking_extract
+
+SENT.clear()
+send(M, media=True)
+check("M: oversized bill → too-large message, OCR never runs",
+      not extraction_called["hit"] and any("too large" in m.lower() for m in SENT))
+check("M: state falls back to WAITING_FOR_BILL after rejection",
+      state_of(M) == states.WAITING_FOR_BILL)
+
+# Restore stubs so later runs are unaffected.
+wa.download_media = _orig_download
+bill_extractor.extract_bill = _orig_extract
+
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")
 SENT.clear()

@@ -1,6 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+
+from app.rate_limit import limiter
 from app.services import solar_calc
 from app.services.report_generator import generate_report
 
@@ -11,9 +13,11 @@ VALID_ORIENTATIONS = list(solar_calc.ORIENTATION_FACTORS.keys())
 
 
 class ReportRequest(BaseModel):
+    # Same bounds as AssessRequest — the report renders a panel-layout image,
+    # so an unbounded roof area is a worker-hanging DoS vector, not just bad data.
     state:                    str   = Field(..., examples=["Selangor"])
-    monthly_consumption_kwh:  float = Field(..., gt=0, examples=[350])
-    roof_area_sqm:            float = Field(..., gt=0, examples=[40])
+    monthly_consumption_kwh:  float = Field(..., gt=0, le=100_000, examples=[350])
+    roof_area_sqm:            float = Field(..., gt=0, le=10_000, examples=[40])
     roof_orientation:         str   = Field(..., examples=["South"])
 
 
@@ -22,7 +26,8 @@ class ReportRequest(BaseModel):
     response_class=Response,
     responses={200: {"content": {"application/pdf": {}}, "description": "Solar assessment PDF report"}},
 )
-def create_report(payload: ReportRequest):
+@limiter.limit("30/hour")
+def create_report(request: Request, payload: ReportRequest):
     if payload.state not in VALID_STATES:
         raise HTTPException(
             status_code=422,

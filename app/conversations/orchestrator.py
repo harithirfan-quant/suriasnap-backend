@@ -34,6 +34,10 @@ logger = logging.getLogger("suriasnap.orchestrator")
 
 MEDIA_DIR = os.getenv("MEDIA_DIR", "media")
 
+# Reject bills larger than this before they reach the OCR/PDF pipeline —
+# matches the web upload cap in app/routers/bill.py.
+MAX_MEDIA_BYTES = 10 * 1024 * 1024
+
 CO2_PER_TREE_KG = 22
 DEFAULT_ROOF_HINT = 40  # m², a typical Malaysian terrace — suggested if unsure
 
@@ -380,6 +384,14 @@ def _handle_bill(phone: str, msg: InboundMessage, lang: str) -> None:
     except Exception:
         logger.exception("Media download failed for %s", phone)
         _send(phone, t("bill_download_failed", lang))
+        store.set_state(phone, states.WAITING_FOR_BILL)
+        return
+
+    # WhatsApp allows documents up to 100MB; rendering one at 300 DPI would
+    # OOM the small production instance. Same 10MB cap as the web upload.
+    if len(data) > MAX_MEDIA_BYTES:
+        logger.warning("Rejected %d-byte bill from %s (cap %d)", len(data), phone, MAX_MEDIA_BYTES)
+        _send(phone, t("bill_too_large", lang))
         store.set_state(phone, states.WAITING_FOR_BILL)
         return
 

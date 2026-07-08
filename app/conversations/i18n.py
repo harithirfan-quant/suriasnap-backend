@@ -140,6 +140,10 @@ _STRINGS = {
         "en": "I couldn't download that file 😕. Please try sending it again.",
         "bm": "Saya tidak dapat muat turun fail itu 😕. Sila cuba hantar semula.",
     },
+    "bill_too_large": {
+        "en": "That file is too large (max 10MB) 😅. Please send a smaller photo or a 1-page PDF of your bill.",
+        "bm": "Fail itu terlalu besar (maks 10MB) 😅. Sila hantar foto lebih kecil atau PDF 1 halaman bil anda.",
+    },
     "bill_confirm_no_kwh": {
         "en": "I couldn't read your usage clearly",
         "bm": "Saya tidak dapat baca penggunaan anda dengan jelas",

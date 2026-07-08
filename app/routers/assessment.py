@@ -11,9 +11,13 @@ VALID_ORIENTATIONS = list(solar_calc.ORIENTATION_FACTORS.keys())
 
 
 class AssessRequest(BaseModel):
+    # Upper bounds are a DoS guard, not just validation: roof area feeds the
+    # panel-layout renderer, and an absurd value would have it draw millions
+    # of rectangles. 10,000 m² / 100,000 kWh comfortably covers any real
+    # residential (or even commercial-curious) input.
     state: str = Field(..., examples=["Selangor"])
-    monthly_consumption_kwh: float = Field(..., gt=0, examples=[350])
-    roof_area_sqm: float = Field(..., gt=0, examples=[40])
+    monthly_consumption_kwh: float = Field(..., gt=0, le=100_000, examples=[350])
+    roof_area_sqm: float = Field(..., gt=0, le=10_000, examples=[40])
     roof_orientation: str = Field(..., examples=["South"])
 
 

@@ -13,6 +13,10 @@ from app.conversations import store
 
 load_dotenv()
 
+# Render sets RENDER=true in every service's environment — use it to tell
+# production apart from local dev without any extra configuration.
+IS_PRODUCTION = bool(os.getenv("RENDER"))
+
 
 @asynccontextmanager
 async def _lifespan(app: FastAPI):
@@ -35,7 +39,28 @@ app = FastAPI(
     description="AI solar assessment backend for Malaysian homes",
     version="1.0.0",
     lifespan=_lifespan,
+    # Swagger/ReDoc/openapi.json hand any visitor an interactive map of the
+    # full API surface — useful locally, needless exposure in production.
+    docs_url=None if IS_PRODUCTION else "/docs",
+    redoc_url=None if IS_PRODUCTION else "/redoc",
+    openapi_url=None if IS_PRODUCTION else "/openapi.json",
 )
+
+
+@app.middleware("http")
+async def _security_headers(request, call_next):
+    """Baseline hardening headers on every response. The Vercel-hosted
+    frontend already gets these from Vercel's edge; the API did not."""
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    if IS_PRODUCTION:
+        response.headers.setdefault(
+            "Strict-Transport-Security", "max-age=63072000; includeSubDomains"
+        )
+    return response
 
 # Rate limiting — CORS only stops browsers, not curl/scripts, and the bill
 # scan endpoint calls paid Claude Vision per request. Keyed by client IP;
