@@ -357,8 +357,12 @@ def _export_scheme_explainer(styles: dict, data: dict, state: str = "") -> list:
     """
     Export/net-metering scheme description — genuinely different mechanics
     depending on utility, not just a rename:
-      - TNB territory (Peninsular + Labuan): Solar ATAP, a SEDA-administered
-        government feed-in tariff with published RM/kWh export rates.
+      - TNB territory (Peninsular + Labuan): Solar ATAP (GP/ST/No.60/2025).
+        A net-billing scheme, NOT a feed-in tariff — surplus is credited
+        against the SAME billing period's bill at the domestic Energy
+        Charge rate, capped at zeroing that bill (no cash beyond that,
+        §14.1(e)) and at the lower of the MAQ or that period's grid
+        consumption (§14.1(b)-(d)); unused surplus is forfeited, not banked.
       - Sabah (SESB) / Sarawak (SESCO): their own separate net-metering
         schemes, NOT Solar ATAP — SEDA has no jurisdiction there. Export
         rates shown are an approximation (see tariffs.json sources); a
@@ -369,12 +373,14 @@ def _export_scheme_explainer(styles: dict, data: dict, state: str = "") -> list:
 
     if scheme == "Solar ATAP":
         body = (
-            "The <b>Solar ATAP</b> (Skim Suria Atap) programme by SEDA Malaysia enables residential "
-            f"solar owners to sell surplus electricity back to {utility}. Export rates: "
+            "The <b>Solar ATAP</b> (Skim Suria Atap) programme by SEDA Malaysia lets residential "
+            f"solar owners offset their {utility} bill with surplus electricity. Credit rate: "
             "<b>RM 0.27 per kWh</b> (≤1,500 kWh/month consumption) or <b>RM 0.37 per kWh</b> "
-            "(>1,500 kWh/month consumption). Generation offsets your consumption first; "
-            "any excess is exported to the grid for credit on your next electricity bill. "
-            "10-year contract, no quota limits. System capacity is capped at your contracted demand or 12 kWp, whichever is lower."
+            "(>1,500 kWh/month consumption) — the same rate as the normal energy charge. Generation "
+            "offsets your consumption first; any surplus credits that same month's bill down to "
+            "<b>RM 0</b> — there is no cash payout beyond that, and unused surplus is not carried to "
+            "the next month. 10-year contract. Typical residential capacity limit: 5 kW (single phase) "
+            "or 15 kW (three phase)."
         )
     else:
         export_rate = data.get("export_rate_rm", 0)

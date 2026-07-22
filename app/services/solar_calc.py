@@ -75,11 +75,16 @@ def _sesco_bill(consumption_kwh: float) -> float:
 def _bill_and_scheme(state: str) -> tuple:
     """
     Return (bill_fn, export_rate_fn, scheme_name) for the utility serving
-    `state`. TNB territory (Peninsular + Labuan) is on Solar ATAP, a
-    government feed-in tariff. Sabah (SESB) and Sarawak (SESCO) are NOT on
-    Solar ATAP — they run their own separate net-metering schemes, which we
-    approximate as 1:1 crediting at the same tariff used for consumption
-    (no separate published export rate found for either).
+    `state`. TNB territory (Peninsular + Labuan) is on Solar ATAP
+    (GP/ST/No.60/2025) — a net-billing scheme, NOT a feed-in tariff: surplus
+    credits the SAME billing period's bill at the domestic Energy Charge
+    rate, capped at zeroing that bill (no cash beyond that — guideline
+    §14.1(e)) and at the lower of the MAQ or that period's grid consumption
+    (§14.1(b)-(d)); unused surplus is forfeited, not banked. Sabah (SESB)
+    and Sarawak (SESCO) are NOT on Solar ATAP — they run their own separate
+    net-metering schemes, which we approximate as 1:1 crediting at the same
+    tariff used for consumption (no separate published export rate found
+    for either).
     """
     utility = utility_name(state)
 

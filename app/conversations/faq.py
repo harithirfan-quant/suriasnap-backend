@@ -45,10 +45,11 @@ FAQ = [
             "desc": "Solar ATAP programme explained",
             "answer": (
                 "*Solar ATAP* (Skim Suria Atap) is SEDA's programme that lets *TNB* customers "
-                "(Peninsular Malaysia + Labuan) sell surplus solar power back to the grid. Export rates: "
-                "*RM 0.27/kWh* (≤1,500 kWh/month) or *RM 0.37/kWh* (>1,500 kWh/month). Your panels offset "
-                "your own usage first; any excess is exported and credited on your next bill. 10-year "
-                "contract, no quota limits.\n\n"
+                "(Peninsular Malaysia + Labuan) offset their bill with surplus solar power. Credit rate: "
+                "*RM 0.27/kWh* (≤1,500 kWh/month) or *RM 0.37/kWh* (>1,500 kWh/month) — the same rate as "
+                "your normal energy charge. Your panels offset your own usage first; any surplus credits "
+                "that same month's bill, down to *RM 0* — there's no cash payout beyond that, and unused "
+                "surplus isn't carried to the next month. 10-year contract.\n\n"
                 "*Sabah (SESB)* and *Sarawak (SESCO)* aren't on Solar ATAP — they each run their own "
                 "separate net-metering scheme. Sarawak also offers a one-off subsidy (RM8,000–12,000) "
                 "toward install cost. Send your bill and I'll tell you exactly what applies to you."
@@ -59,10 +60,11 @@ FAQ = [
             "desc": "Penjelasan skim Solar ATAP",
             "answer": (
                 "*Solar ATAP* (Skim Suria Atap) ialah program SEDA yang membolehkan pelanggan *TNB* "
-                "(Semenanjung Malaysia + Labuan) menjual lebihan kuasa solar semula ke grid. Kadar eksport: "
-                "*RM 0.27/kWh* (≤1,500 kWh/bulan) atau *RM 0.37/kWh* (>1,500 kWh/bulan). Panel anda "
-                "mengimbangi penggunaan sendiri dahulu; lebihan dieksport dan dikreditkan pada bil "
-                "seterusnya. Kontrak 10 tahun, tiada had kuota.\n\n"
+                "(Semenanjung Malaysia + Labuan) mengimbangi bil dengan lebihan kuasa solar. Kadar kredit: "
+                "*RM 0.27/kWh* (≤1,500 kWh/bulan) atau *RM 0.37/kWh* (>1,500 kWh/bulan) — sama seperti "
+                "caj tenaga biasa anda. Panel anda mengimbangi penggunaan sendiri dahulu; lebihan "
+                "mengkredit bil bulan yang sama, sehingga *RM 0* — tiada bayaran tunai selepas itu, dan "
+                "lebihan tidak dibawa ke bulan seterusnya. Kontrak 10 tahun.\n\n"
                 "*Sabah (SESB)* dan *Sarawak (SESCO)* tidak termasuk dalam Solar ATAP — masing-masing "
                 "menjalankan skim net-metering berasingan sendiri. Sarawak juga menawarkan subsidi "
                 "sekali sahaja (RM8,000–12,000) untuk kos pemasangan. Hantar bil anda dan saya akan "
