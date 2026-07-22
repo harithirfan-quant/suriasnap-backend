@@ -128,12 +128,19 @@ def assess(
     monthly_gen_kwh     = daily_gen_kwh * DAYS_PER_MONTH
 
     # --- Monthly savings ---
+    # Solar ATAP is a net-billing scheme, not a feed-in tariff: surplus
+    # generation credits that SAME billing period's bill, capped at zeroing
+    # it — there is no cash beyond that (guideline §14.1(e)), and unused
+    # surplus is forfeited, not banked (§14.1(b)-(d)). bill_fn(0) == 0 for
+    # every utility here, so when generation >= consumption, net_consumption
+    # is already 0 and (old_bill - new_bill) already equals the full old
+    # bill — the correct, capped maximum. There is no additional "export
+    # revenue" to add on top of that; doing so previously double-counted
+    # the same forfeited surplus as bonus cash income.
     old_bill            = bill_fn(monthly_consumption_kwh)
     net_consumption     = max(0.0, monthly_consumption_kwh - monthly_gen_kwh)
     new_bill            = bill_fn(net_consumption)
-    export_kwh          = max(0.0, monthly_gen_kwh - monthly_consumption_kwh)
-    export_revenue      = export_kwh * export_rate
-    monthly_savings_rm  = (old_bill - new_bill) + export_revenue
+    monthly_savings_rm  = old_bill - new_bill
 
     # --- CO2 ---
     annual_co2_offset_kg = monthly_gen_kwh * 12 * GRID_EMISSION_FACTOR

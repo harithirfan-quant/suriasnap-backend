@@ -429,6 +429,34 @@ check("M: state falls back to WAITING_FOR_BILL after rejection",
 wa.download_media = _orig_download
 bill_extractor.extract_bill = _orig_extract
 
+# ── Run N: Solar ATAP savings never exceed the pre-solar bill ────────────────
+# Regression test for the net-billing fix (SEDA GP/ST/No.60/2025 §14.1(e)):
+# generation beyond consumption forfeits, it never becomes bonus cash on top
+# of a fully-offset bill.
+print("\n=== Run N: savings capped at pre-solar bill (no bonus export cash) ===")
+from app.services import solar_calc
+
+small_kwh = 150
+oversized_roof = solar_calc.assess("Selangor", small_kwh, 300, "South")
+check("N: oversized system generates far more than it consumes",
+      oversized_roof["monthly_generation_kwh"] > small_kwh * 3)
+pre_solar_bill = round(solar_calc._tnb_bill(small_kwh), 2)
+check("N: monthly savings capped exactly at the pre-solar bill, no bonus",
+      oversized_roof["monthly_savings_rm"] == pre_solar_bill)
+
+undersized_roof = solar_calc.assess("Selangor", 1000, 20, "South")
+check("N: undersized system still generates less than it consumes",
+      undersized_roof["monthly_generation_kwh"] < 1000)
+check("N: normal partial-offset case still saves less than the full bill",
+      undersized_roof["monthly_savings_rm"] < round(solar_calc._tnb_bill(1000), 2))
+
+check("N: Sabah oversized savings capped correctly",
+      solar_calc.assess("Sabah", 150, 300, "South")["monthly_savings_rm"]
+      == round(solar_calc._sesb_bill(150), 2))
+check("N: Sarawak oversized savings capped correctly",
+      solar_calc.assess("Sarawak", 150, 300, "South")["monthly_savings_rm"]
+      == round(solar_calc._sesco_bill(150), 2))
+
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")
 SENT.clear()
