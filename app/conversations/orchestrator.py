@@ -38,6 +38,15 @@ MEDIA_DIR = os.getenv("MEDIA_DIR", "media")
 # matches the web upload cap in app/routers/bill.py.
 MAX_MEDIA_BYTES = 10 * 1024 * 1024
 
+# The intro goes out as an approved template first, because free-form
+# interactive messages are rejected outside the 24-hour customer-service
+# window (Meta error 131047) — a template is not. Name/language must match an
+# approved template in WhatsApp Manager exactly: a template created as
+# "English (US)" is `en_US`, plain "English" is `en`. Point these at a BM
+# template later without hunting through the file.
+INTRO_TEMPLATE_NAME = os.getenv("INTRO_TEMPLATE_NAME", "suriasnap_intro")
+INTRO_TEMPLATE_LANG = os.getenv("INTRO_TEMPLATE_LANG", "en_US")
+
 CO2_PER_TREE_KG = 22
 DEFAULT_ROOF_HINT = 40  # m², a typical Malaysian terrace — suggested if unsure
 
@@ -96,8 +105,25 @@ def _send(phone: str, body: str, message_type: str = "text") -> None:
 
 
 def _send_intro(phone: str, lang: str) -> None:
-    """Greeting with tappable Scan/Manual/FAQ buttons. Falls back to plain
-    text (with typed instructions) if the interactive message can't be sent."""
+    """Greeting with tappable Scan/Manual/FAQ buttons, in three tiers:
+
+      1. approved template  — the only tier that survives outside the 24h
+         customer-service window; needs the template approved in WhatsApp Manager
+      2. interactive buttons — same three buttons, free-form, inside the window only
+      3. plain text          — always deliverable, but long and untappable
+
+    Each fallback logs Meta's own error text so the next failure is diagnosable
+    from the logs rather than invisible behind a silent downgrade."""
+    try:
+        wa.send_template(phone, INTRO_TEMPLATE_NAME, INTRO_TEMPLATE_LANG)
+        store.log_message(phone, "out", "template", f"intro template {INTRO_TEMPLATE_NAME}")
+        return
+    except Exception as exc:
+        logger.warning(
+            "Intro template '%s' (%s) rejected for %s: %s — falling back to interactive buttons",
+            INTRO_TEMPLATE_NAME, INTRO_TEMPLATE_LANG, phone, exc,
+        )
+
     try:
         wa.send_buttons(
             phone,
@@ -108,10 +134,14 @@ def _send_intro(phone: str, lang: str) -> None:
                 {"id": "intro_faq",    "title": t("intro_btn_faq", lang)},
             ],
         )
-    except Exception:
-        logger.exception("Intro buttons failed for %s; sending plain text", phone)
-        _send(phone, t("intro", lang))
-    store.log_message(phone, "out", "interactive", "intro buttons")
+        store.log_message(phone, "out", "interactive", "intro buttons")
+        return
+    except Exception as exc:
+        logger.warning(
+            "Intro buttons rejected for %s: %s — falling back to plain text", phone, exc,
+        )
+
+    _send(phone, t("intro", lang))
 
 
 def _send_faq_menu(phone: str, lang: str) -> None:

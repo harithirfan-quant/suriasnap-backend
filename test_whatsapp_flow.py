@@ -41,6 +41,7 @@ os.environ["SQLITE_DB_PATH"] = os.path.join(_tmp, "test.db")
 os.environ["MEDIA_DIR"] = os.path.join(_tmp, "media")
 
 from app.conversations import orchestrator, states, store
+from app.conversations.i18n import t
 from app.extraction import bill_extractor
 from app.reports import adapter as reports
 from app.reports import design_preview
@@ -58,6 +59,20 @@ wa.send_image = lambda to, mid, caption=None: SENT.append(f"[IMG] {caption}")
 wa.send_list = lambda to, body, button, rows, section_title="", header=None: SENT.append(f"[LIST {len(rows)} rows] {body}")
 wa.send_buttons = lambda to, body, buttons, header=None: SENT.append(body)
 wa.upload_media = lambda b, fn, mime: "FAKE_MEDIA_ID"
+
+# Template sends are recorded separately (name/language are what we assert on)
+# and also mirrored into SENT: the approved template body carries the same
+# intro copy the interactive/text tiers send, so intro assertions elsewhere in
+# this file keep testing what the user actually receives.
+TEMPLATES: list[dict] = []
+TEMPLATE_FAILS = {"on": False}
+def _fake_send_template(to, name, language, components=None):
+    TEMPLATES.append({"to": to, "name": name, "language": language, "components": components})
+    if TEMPLATE_FAILS["on"]:
+        raise RuntimeError("(#132001) Template name does not exist in the translation")
+    SENT.append(f"[TEMPLATE {name}/{language}] " + t("intro", "en"))
+wa.send_template = _fake_send_template
+
 wa.download_media = lambda mid: (b"fake-bytes", "image/jpeg")
 reports.generate_pdf_bytes = lambda *a, **k: b"%PDF-fake"
 design_preview.render_design_png = lambda *a, **k: b"PNG"
@@ -394,7 +409,7 @@ check("K: roof given → DONE", state_of(K) == states.DONE)
 print("\n=== Run L: intro buttons ===")
 L = "60123000012"
 send(L, text="hi")
-check("L: greeting sends interactive intro buttons",
+check("L: greeting delivers the intro copy",
       any(m.startswith("👋") or "SuriaSnap" in m for m in SENT))
 
 SENT.clear()
@@ -456,6 +471,58 @@ check("N: Sabah oversized savings capped correctly",
 check("N: Sarawak oversized savings capped correctly",
       solar_calc.assess("Sarawak", 150, 300, "South")["monthly_savings_rm"]
       == round(solar_calc._sesco_bill(150), 2))
+
+# ── Run O: intro send cascade (template → buttons → text) ────────────────────
+# The intro must lead with an approved template: interactive messages are
+# rejected outside the 24-hour customer-service window, templates are not.
+print("\n=== Run O: intro cascade ===")
+O = "60123000014"
+
+SENT.clear()
+TEMPLATES.clear()
+send(O, text="hi")
+check("O: tier 1 — greeting sends a template first",
+      len(TEMPLATES) == 1)
+check("O: tier 1 — template name matches the approved template",
+      TEMPLATES[-1]["name"] == orchestrator.INTRO_TEMPLATE_NAME == "suriasnap_intro")
+check("O: tier 1 — template language matches the constant",
+      TEMPLATES[-1]["language"] == orchestrator.INTRO_TEMPLATE_LANG)
+check("O: tier 1 — template goes to the right number", TEMPLATES[-1]["to"] == O)
+check("O: tier 1 — no interactive/text fallback when the template succeeds",
+      len(SENT) == 1 and SENT[0].startswith("[TEMPLATE "))
+
+# Tier 2: template rejected (e.g. not approved yet) → interactive buttons.
+SENT.clear()
+TEMPLATES.clear()
+TEMPLATE_FAILS["on"] = True
+orchestrator._send_intro(O, "en")
+check("O: tier 2 — template was still attempted first", len(TEMPLATES) == 1)
+check("O: tier 2 — falls back to the interactive buttons (intro copy, no template marker)",
+      len(SENT) == 1 and "SuriaSnap" in SENT[0] and not SENT[0].startswith("[TEMPLATE "))
+
+# Tier 3: template AND buttons rejected (e.g. outside the 24h window) → text.
+SENT.clear()
+TEMPLATES.clear()
+_orig_buttons = wa.send_buttons
+def _failing_buttons(to, body, buttons, header=None):
+    raise RuntimeError("(#131047) Re-engagement message outside the 24 hour window")
+wa.send_buttons = _failing_buttons
+orchestrator._send_intro(O, "en")
+check("O: tier 3 — both interactive tiers attempted before plain text",
+      len(TEMPLATES) == 1)
+check("O: tier 3 — plain-text intro still reaches the user",
+      len(SENT) == 1 and "SuriaSnap" in SENT[0])
+
+wa.send_buttons = _orig_buttons
+TEMPLATE_FAILS["on"] = False
+
+# BM contacts still get the intro through the cascade (template is EN-only for
+# now; tiers 2/3 stay bilingual).
+SENT.clear()
+TEMPLATE_FAILS["on"] = True
+orchestrator._send_intro(O, "bm")
+check("O: BM fallback intro is in Bahasa Malaysia", "Hai! Saya" in SENT[-1])
+TEMPLATE_FAILS["on"] = False
 
 # ── dedupe ───────────────────────────────────────────────────────────────────
 print("\n=== Dedupe ===")

@@ -128,6 +128,21 @@ def _parse_single(m: dict, names: dict) -> InboundMessage | None:
             **base,
         )
 
+    if mtype == "button":
+        # User tapped a quick-reply button on a *template* message. Meta sends
+        # these as type "button" with a payload — not as interactive.button_reply
+        # — so normalise them to the interactive shape and let the orchestrator
+        # match the payload exactly like a reply-button id.
+        btn = m.get("button", {})
+        payload, title = btn.get("payload"), btn.get("text")
+        logger.debug("Template button tap payload=%r title=%r", payload, title)
+        return InboundMessage(
+            msg_type="interactive",
+            text=payload,
+            extras={"title": title},
+            **base,
+        )
+
     if mtype == "interactive":
         # User tapped a list row or reply button — surface the selected id as
         # `text` so the orchestrator can match it (e.g. an FAQ row id).
@@ -140,5 +155,5 @@ def _parse_single(m: dict, names: dict) -> InboundMessage | None:
             **base,
         )
 
-    # Stickers, audio, location, button replies, etc. — handled generically
+    # Stickers, audio, location, contacts, etc. — handled generically
     return InboundMessage(msg_type="other", **base)

@@ -59,6 +59,54 @@ check("fallback avoids 600 boundary", _parse_consumption(tier_trap), 455.0)
 # Nothing extractable
 check("no kWh returns None", _parse_consumption("hello world, no numbers"), None)
 
+# ── inbound webhook shapes ───────────────────────────────────────────────────
+# Quick-reply taps on a *template* arrive as type "button" with a payload,
+# unlike free-form interactive buttons (interactive.button_reply.id). Both must
+# reach the orchestrator as msg_type="interactive" so the intro_* branches match.
+from app.whatsapp.parser import parse_inbound
+
+
+def _envelope(message: dict) -> dict:
+    """Wrap one message in the entry/changes/value envelope Meta posts."""
+    return {"entry": [{"changes": [{"value": {
+        "contacts": [{"wa_id": "60123000001", "profile": {"name": "Test User"}}],
+        "messages": [{"from": "60123000001", "id": "wamid-btn", **message}],
+    }}]}]}
+
+
+def _button(payload: str, text: str = "📄 Scan bill") -> dict:
+    return {"type": "button", "button": {"payload": payload, "text": text}}
+
+
+tap = parse_inbound(_envelope(_button("intro_scan")))[0]
+check("template button tap → interactive", tap.msg_type, "interactive")
+check("template button payload becomes text", tap.text, "intro_scan")
+check("template button title kept in extras", tap.extras["title"], "📄 Scan bill")
+
+unknown = parse_inbound(_envelope(_button("not_a_real_id", "Mystery")))[0]
+check("unknown button payload still interactive, not other", unknown.msg_type, "interactive")
+check("unknown button payload preserved", unknown.text, "not_a_real_id")
+
+manual = parse_inbound(_envelope(_button("intro_manual", "✏️ Enter manually")))[0]
+check("intro_manual payload round-trips", manual.text, "intro_manual")
+
+# A button message with no payload must not crash the parser.
+empty = parse_inbound(_envelope({"type": "button", "button": {}}))[0]
+check("button with no payload parses with text=None", (empty.msg_type, empty.text),
+      ("interactive", None))
+
+# Free-form interactive replies keep working unchanged.
+reply = parse_inbound(_envelope({
+    "type": "interactive",
+    "interactive": {"type": "button_reply",
+                    "button_reply": {"id": "intro_faq", "title": "❓ FAQ"}},
+}))[0]
+check("interactive button_reply still parses", (reply.msg_type, reply.text),
+      ("interactive", "intro_faq"))
+
+sticker = parse_inbound(_envelope({"type": "sticker", "sticker": {"id": "S1"}}))[0]
+check("unhandled type still falls through to other", sticker.msg_type, "other")
+
 print()
 if FAILURES:
     print(f"{len(FAILURES)} FAILURE(S): {FAILURES}")

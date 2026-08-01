@@ -3,6 +3,7 @@ Thin client for the Meta WhatsApp Cloud API (Graph API), using plain `httpx`.
 
 Covers exactly what the MVP needs:
     - send_text()       outbound text reply
+    - send_template()   outbound approved template (works outside the 24h window)
     - send_document()   outbound PDF (by media id)
     - upload_media()    upload a file, get a media id back (free)
     - download_media()  fetch an inbound image/PDF the user sent us
@@ -150,6 +151,36 @@ def send_buttons(to: str, body: str, buttons: list[dict], header: str | None = N
         resp = client.post(url, headers=_auth_headers(), json=payload)
     if resp.status_code >= 400:
         logger.error("send_buttons failed (%s): %s", resp.status_code, resp.text)
+    resp.raise_for_status()
+
+
+def send_template(to: str, name: str, language: str, components: list[dict] | None = None) -> None:
+    """Send a pre-approved message template.
+
+    Unlike text/interactive messages, a template can be delivered outside the
+    24-hour customer-service window — which is why the intro uses one. `name`
+    and `language` must match an approved template exactly (a template created
+    as "English (US)" needs the code `en_US`, not `en`). `components` carries
+    body/header variables and is empty for a fully static template."""
+    if _dry_run():
+        logger.info("[DRY_RUN] → %s: [template %s/%s]", to, name, language)
+        return
+
+    url = f"{GRAPH_BASE}/{_phone_number_id()}/messages"
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to,
+        "type": "template",
+        "template": {
+            "name": name,
+            "language": {"code": language},
+            "components": components or [],
+        },
+    }
+    with httpx.Client(timeout=30) as client:
+        resp = client.post(url, headers=_auth_headers(), json=payload)
+    if resp.status_code >= 400:
+        logger.error("send_template failed (%s): %s", resp.status_code, resp.text)
     resp.raise_for_status()
 
 
