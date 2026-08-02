@@ -180,6 +180,72 @@ FAQ = [
         },
     },
     {
+        # Titles are capped at 24 chars by WhatsApp, so the row reads "How is my
+        # estimate made?" while the answer carries the full engine explanation.
+        # Every number here mirrors app/services/solar_calc.py.
+        "id": "faq_how",
+        "en": {
+            "title": "How is my estimate made?",
+            "desc": "How SuriaSnap calculates your numbers",
+            "answer": (
+                "We size the system from your *bill* and your *roof*. Panels are 400 W each and we "
+                "only count *70%* of your roof as usable, so a 23.4 m2 roof fits about 8 panels = "
+                "*3.2 kWp*.\n\n"
+                "Generation uses your state's sunlight (GHI — e.g. Selangor 4.7 kWh/m2/day), your "
+                "roof direction (south is best) and a 0.80 performance ratio. We then run your real "
+                "tariff — *Solar ATAP* for TNB, or SESB / Sarawak Energy net metering — to get "
+                "monthly savings, payback and 25-year ROI (with 0.5%/year panel degradation) at "
+                "*RM 7,000 per kWp* installed.\n\n"
+                "Example: 400 kWh/month in Selangor → 3.2 kWp, 8 panels, about *RM 1,924/year* "
+                "saved and an *11.6-year* payback. It's an estimate, not a quote — a SEDA-registered "
+                "installer confirms with a site survey."
+            ),
+        },
+        "bm": {
+            "title": "Bagaimana ia dikira?",
+            "desc": "Cara SuriaSnap mengira anggaran anda",
+            "answer": (
+                "Kami saiz sistem daripada *bil* dan *bumbung* anda. Setiap panel 400 W dan hanya "
+                "*70%* bumbung dikira boleh guna, jadi bumbung 23.4 m2 muat kira-kira 8 panel = "
+                "*3.2 kWp*.\n\n"
+                "Penjanaan mengikut cahaya matahari negeri anda (GHI — cth. Selangor 4.7 "
+                "kWh/m2/hari), arah bumbung (selatan terbaik) dan nisbah prestasi 0.80. Kemudian "
+                "kami guna tarif sebenar anda — *Solar ATAP* untuk TNB, atau net metering SESB / "
+                "Sarawak Energy — untuk dapat penjimatan bulanan, pulang modal dan ROI 25 tahun "
+                "(susut panel 0.5% setahun) pada *RM 7,000 sekWp* dipasang.\n\n"
+                "Contoh: 400 kWh/bulan di Selangor → 3.2 kWp, 8 panel, jimat kira-kira "
+                "*RM 1,924/tahun* dan pulang modal *11.6 tahun*. Ini anggaran, bukan sebut harga — "
+                "pemasang berdaftar SEDA akan sahkan dengan tinjauan tapak."
+            ),
+        },
+    },
+    {
+        "id": "faq_business",
+        "en": {
+            "title": "Are you an installer?",
+            "desc": "List your company or update your contact info",
+            "answer": (
+                "SuriaSnap isn't an installer — we're a free estimate tool. We list about *435 "
+                "SEDA-registered* installers at suriasnap.my, searchable by company name, and "
+                "customers can send an installer their estimate in one tap.\n\n"
+                "If you *are* a SEDA-registered installer and want to be listed, or want to update "
+                "your contact details, email *harithirfanworkspace@gmail.com*."
+            ),
+        },
+        "bm": {
+            "title": "Anda pemasang solar?",
+            "desc": "Senaraikan syarikat anda atau kemas kini maklumat",
+            "answer": (
+                "SuriaSnap bukan pemasang — kami alat anggaran percuma. Kami menyenaraikan "
+                "kira-kira *435* pemasang *berdaftar SEDA* di suriasnap.my, boleh dicari mengikut "
+                "nama syarikat, dan pelanggan boleh hantar anggaran kepada pemasang dengan satu "
+                "ketikan.\n\n"
+                "Jika anda *memang* pemasang berdaftar SEDA dan mahu disenaraikan, atau mahu kemas "
+                "kini maklumat perhubungan, e-mel *harithirfanworkspace@gmail.com*."
+            ),
+        },
+    },
+    {
         "id": "faq_install",
         "en": {
             "title": "How long to install?",

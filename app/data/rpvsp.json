@@ -131,6 +131,7 @@
       "city": "Kuantan",
       "website": "https://alphasolar.my",
       "phone": "+6013-818 1827",
+      "whatsapp": "60138181827",
       "coverage": "peninsular",
       "focus": [
         "residential",
@@ -338,6 +339,7 @@
       "city": "Kota Bharu",
       "website": "https://arusenerg.com",
       "phone": "+6019-932 1677",
+      "whatsapp": "601112404406",
       "coverage": "regional",
       "focus": [
         "residential",
@@ -1748,10 +1750,11 @@
     },
     {
       "name": "INHOME SOLAR SDN BHD",
-      "hq_state": null,
+      "hq_state": "Negeri Sembilan",
       "city": null,
       "website": null,
       "phone": null,
+      "whatsapp": "60193335203",
       "coverage": null,
       "focus": [],
       "blurb": null
@@ -2482,6 +2485,7 @@
       "city": "Petaling Jaya",
       "website": "https://northernsolar.com.my",
       "phone": "+603-7839 8319",
+      "whatsapp": "60106611015",
       "coverage": "peninsular",
       "focus": [
         "residential",
@@ -2790,7 +2794,8 @@
         "Penang",
         "Johor",
         "Sabah",
-        "Sarawak"
+        "Sarawak",
+        "Labuan"
       ]
     },
     {
@@ -2959,6 +2964,7 @@
       "city": "Alor Setar",
       "website": "https://www.renosungroup.com",
       "phone": "+604-731 9922",
+      "whatsapp": "60194888801",
       "coverage": "peninsular",
       "focus": [
         "residential",
