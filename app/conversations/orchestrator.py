@@ -597,9 +597,20 @@ def _installer_block(state: str, lang: str) -> str:
 
     lines = []
     for i in rec["installers"][:3]:
-        web = i["website"].split("//")[-1].rstrip("/")
-        loc = i["city"] if i["city"] == i["hq_state"] else f"{i['city']}, {i['hq_state']}"
-        lines.append(f"• *{i['name']}* — {loc}\n  {web}")
+        # website/city are null for most of the registry (SEDA publishes names
+        # only) and for providers whose domain has died — render what we have
+        # rather than assuming every field is populated.
+        site = i.get("website")
+        web = site.split("//")[-1].rstrip("/") if site else None
+        city, hq = i.get("city"), i.get("hq_state")
+        if city and hq and city != hq:
+            loc = f"{city}, {hq}"
+        else:
+            loc = city or hq or ""
+        line = f"• *{i['name']}*" + (f" — {loc}" if loc else "")
+        if web:
+            line += f"\n  {web}"
+        lines.append(line)
     body = "\n".join(lines)
 
     if lang == "bm":

@@ -1,287 +1,4468 @@
 {
   "_meta": {
-    "description": "Curated list of SEDA-registered PV service providers (RPVSP) for SuriaSnap.",
-    "source": "Compiled from the providers' own public websites. SEDA's authoritative RPVSP directory is login-gated at https://www.seda.gov.my/directory/registered-pv-service-provider-directory/ and cannot be browsed publicly, so this is a verified subset — not the complete registry.",
-    "official_directory": "https://www.seda.gov.my/directory/registered-pv-service-provider-directory/",
-    "updated": "2026-07",
+    "description": "SEDA Registered PV Service Provider (RPVSP) directory used by SuriaSnap.",
+    "source": "Full company list transcribed from SEDA's public RPVSP listing at https://services.seda.gov.my/spqp/listing (435 companies). The listing publishes company names only in this export, so hq_state/city/website/phone are present only for the entries SuriaSnap had already verified from the providers' own public sites; every other entry carries name only and is deliberately left null rather than guessed.",
+    "official_directory": "https://services.seda.gov.my/spqp/listing",
+    "count": 435,
+    "enriched_count": 23,
+    "updated": "2026-08",
+    "notes": [
+      "Companies previously curated but NOT present in the SEDA listing were removed: Sunview Group, Trexon Energy, Proksi Solar, Guide Solar. The registry is authoritative.",
+      "website is null where the provider's domain no longer resolves (Pekat, GSPARX, Cypark) or where SuriaSnap has no verified URL. Never fabricate one.",
+      "whatsapp is present only for numbers verified by the SuriaSnap team.",
+      "priority_states pins an installer to rank 1 for the listed states (commercial placement)."
+    ],
     "disclaimer": "Always confirm a provider's current SEDA registration on the official directory before signing any contract."
   },
   "installers": [
     {
-      "name": "Solarvest Energy",
-      "hq_state": "Selangor",
-      "city": "Petaling Jaya",
-      "website": "https://solarvest.com",
-      "phone": "+603-7625 3211",
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Public-listed solar EPCC. Residential rooftop via its PowerVest home arm."
+      "name": "DT GLASS SUPPLIERS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Solaroo Energy",
-      "hq_state": "Selangor",
-      "city": "Petaling Jaya",
-      "website": "https://solaroo.com",
+      "name": "8IOPOWER SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["residential"],
-      "blurb": "Home-solar specialist offering end-to-end NEM installation and financing."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Pekat Solar (Pekat Group)",
-      "hq_state": "Selangor",
-      "city": "Puchong",
-      "website": "https://pekatgroup.com.my",
+      "name": "ACO ECO SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Public-listed solar & earthing group covering residential and C&I rooftop."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Verdant Solar",
-      "hq_state": "Selangor",
-      "city": "Petaling Jaya",
-      "website": "https://verdantsolar.my",
+      "name": "ACTION TECH SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AD POWER SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AI SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AIRNERGY SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AIRRO O&M SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AL FATEH GROUP VICTORIOUS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ALBEDO GREENTECH SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ALFATRONICS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ALPHA SOLAR SDN BHD",
+      "hq_state": "Pahang",
+      "city": "Kuantan",
+      "website": "https://alphasolar.my",
+      "phone": "+6013-818 1827",
       "coverage": "peninsular",
-      "focus": ["residential"],
-      "blurb": "Residential-focused rooftop installer serving the Klang Valley and Peninsular Malaysia."
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "East-coast specialist with a Kuantan HQ; also in Penang, Johor and Selangor.",
+      "branches": [
+        "Penang",
+        "Johor"
+      ]
     },
     {
-      "name": "ERS Energy",
-      "hq_state": "Selangor",
-      "city": "Shah Alam",
-      "website": "https://ers.my",
+      "name": "AMBANG BESAR SDN. BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Turnkey solar EPCC for homes and businesses."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Plus Solar",
-      "hq_state": "Kuala Lumpur",
-      "city": "Kuala Lumpur",
-      "website": "https://www.plusxnergy.com",
+      "name": "AMBC TRANSMISSION SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Award-winning C&I and residential solar provider."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "SOLS Energy",
-      "hq_state": "Kuala Lumpur",
-      "city": "Kuala Lumpur",
-      "website": "https://www.solsenergy.com",
-      "phone": "+6018-399 9247",
-      "coverage": "nationwide",
-      "focus": ["residential"],
-      "blurb": "Residential solar social enterprise with a strong home-install focus."
-    },
-    {
-      "name": "Samaiden",
-      "hq_state": "Kuala Lumpur",
-      "city": "Kepong",
-      "website": "https://samaiden.com.my",
-      "phone": "+603-6150 7941",
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Public-listed renewable-energy EPCC and consultancy."
-    },
-    {
-      "name": "Ditrolic Solar",
-      "hq_state": "Kuala Lumpur",
-      "city": "Kuala Lumpur",
-      "website": "https://ditrolicenergy.com/my",
+      "name": "AMIYA ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "One of Malaysia's largest solar EPCCs; residential via Ditrolic Home."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "GSPARX (TNB Group)",
-      "hq_state": "Kuala Lumpur",
-      "city": "Kuala Lumpur",
-      "website": "https://gsparx.com.my",
+      "name": "AMLED SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "TNB Group's solar arm; residential rooftop with rent-to-own options."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Cypark Renewable Energy",
-      "hq_state": "Negeri Sembilan",
-      "city": "Seremban",
-      "website": "https://cypark.com.my",
+      "name": "AMPERAGE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["commercial"],
-      "blurb": "Public-listed renewable-energy and large-scale solar developer."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Sunview Group",
-      "hq_state": "Johor",
-      "city": "Johor Bahru",
-      "website": "https://sunviewgroup.com",
+      "name": "AMPTECH M&E SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Public-listed solar EPCC (Fabulous Sunview) serving homes and businesses."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Solar Sunyield",
-      "hq_state": "Perak",
-      "city": "Ipoh",
-      "website": "https://www.solarsunyield.com",
-      "phone": "+605-541 5663",
-      "coverage": "peninsular",
-      "focus": ["residential", "commercial"],
-      "blurb": "Ipoh-based installer for homes and businesses across Perak and the Klang Valley."
-    },
-    {
-      "name": "Brilliant Solar",
-      "hq_state": "Kuala Lumpur",
-      "city": "Kuala Lumpur",
-      "branches": ["Penang"],
-      "website": "https://brilliantsolar.com.my",
-      "phone": "+6018-373 1786",
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "SEDA-registered installer with a Klang Valley HQ and a Penang (Butterworth) branch."
-    },
-    {
-      "name": "Solana Tec",
-      "hq_state": "Johor",
-      "city": "Johor Bahru",
-      "branches": ["Melaka"],
-      "website": "https://www.solanatec.com.my",
-      "phone": "+6016-720 3487",
-      "coverage": "peninsular",
-      "focus": ["residential"],
-      "blurb": "Residential solar specialist serving Johor and Melaka."
-    },
-    {
-      "name": "Proksi Solar",
-      "hq_state": "Johor",
-      "city": "Johor Bahru",
-      "website": "https://proksisolar.com.my",
+      "name": "AMSOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
       "phone": null,
-      "coverage": "peninsular",
-      "focus": ["residential", "commercial"],
-      "blurb": "Johor Bahru-based solar installer for homes and businesses."
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Guide Solar (Guide Engineering)",
-      "hq_state": "Sarawak",
-      "city": "Kuching",
-      "website": "https://www.guidesolar.com.my",
-      "phone": "+6016-202 1690",
-      "coverage": "regional",
-      "focus": ["residential", "commercial"],
-      "blurb": "Kuching-based solar PV and electrical engineering provider for Sarawak."
+      "name": "AMTEL RESOURCES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "BSL Eco Energy",
-      "hq_state": "Sabah",
-      "city": "Kota Kinabalu",
-      "website": "https://bsleco.com",
-      "phone": "+6088-313 188",
-      "coverage": "regional",
-      "focus": ["residential", "commercial"],
-      "blurb": "Sabah-based solar EPCC, also operating in the Klang Valley."
+      "name": "ANANTAMAYA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Renosun",
-      "hq_state": "Kedah",
-      "city": "Alor Setar",
-      "branches": ["Perlis"],
-      "website": "https://www.renosungroup.com",
-      "phone": "+604-731 9922",
-      "coverage": "peninsular",
-      "focus": ["residential", "commercial"],
-      "blurb": "14-year northern specialist (400+ installs); 80%+ of projects in Kedah, Perlis and Penang."
+      "name": "ANJUNG MERIAH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Arus EnerG",
+      "name": "ANRO TEGUH SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ANTARES ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AQUA SOLAR TECHNOLOGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ARAS KEJURUTERAAN SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ARCGEN ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ARHAS HOLDINGS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ARMANI ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ARMANI SINAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ARMAS JAYA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ARUS ENERG SDN. BHD.",
       "hq_state": "Kelantan",
       "city": "Kota Bharu",
       "website": "https://arusenerg.com",
       "phone": "+6019-932 1677",
       "coverage": "regional",
-      "focus": ["residential", "commercial"],
+      "focus": [
+        "residential",
+        "commercial"
+      ],
       "blurb": "Kota Bharu-based SEDA-certified solar installer; billed as the largest Bumiputera solar provider in Malaysia."
     },
     {
-      "name": "Alpha Solar",
-      "hq_state": "Pahang",
-      "city": "Kuantan",
-      "branches": ["Penang", "Johor"],
-      "website": "https://alphasolar.my",
-      "phone": "+6013-818 1827",
-      "coverage": "peninsular",
-      "focus": ["residential", "commercial"],
-      "blurb": "East-coast specialist with a Kuantan HQ; also in Penang, Johor and Selangor."
+      "name": "ARUS SPEKTRUM SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Trexon Energy",
-      "hq_state": "Selangor",
-      "city": "Cyberjaya",
-      "branches": ["Terengganu", "Perak", "Kedah"],
-      "website": "https://trexon.my",
-      "phone": "+6012-770 7249",
-      "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Malaysia's first app-based solar platform; serves all major states including east-coast Terengganu."
+      "name": "ASD GROUP SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     },
     {
-      "name": "Progressture Power (Progressture Solar)",
+      "name": "ASET ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ASIA GREEN SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ASSIGN SOLAR NEW ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ASTERN TECHNOLOGIES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ATLANTIC BLUE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AVERA ENERGY HOLDINGS SDN.BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "AWANA HIKMAT SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BDB ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BEAUWATTS RE SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BEST RESPECTS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BIIPOWER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BIJAK TENAGA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BINASTRA GREEN ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BM TERA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BNR TECHNOLOGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BOND M&E SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BOON BOON BUILDER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BRIDGEX SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BRILLIANT SOLAR SDN BHD",
       "hq_state": "Kuala Lumpur",
       "city": "Kuala Lumpur",
-      "website": "https://www.progressturesolar.com",
-      "phone": "+603-6413 6568",
+      "website": "https://brilliantsolar.com.my",
+      "phone": "+6018-373 1786",
+      "whatsapp": "60183731786",
       "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Southeast Asia-focused EPCC solar developer and RPVI; holds SEDA RPVSP, RPVI, and G7 CIDB licence. Serves residential rooftops through to utility-scale farms; also offers battery storage, EV charging, PPAs, and sustainability consulting."
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "SEDA-registered installer with a Klang Valley HQ and a Penang (Butterworth) branch.",
+      "branches": [
+        "Penang"
+      ]
     },
     {
-      "name": "Milieu Solar",
-      "hq_state": "Selangor",
-      "city": "Kota Damansara",
-      "website": "https://milieu.com.my",
-      "phone": "+603-7665 5727",
+      "name": "BSL ECO ENERGY SDN BHD",
+      "hq_state": "Sabah",
+      "city": "Kota Kinabalu",
+      "website": "https://bsleco.com",
+      "phone": "+6088-313 188",
+      "coverage": "regional",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Sabah-based solar EPCC, also operating in the Klang Valley."
+    },
+    {
+      "name": "BST LINKS VENTURES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "BUTAN CONSTRUCTION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "C & Y ELECTRICAL SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CA ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CBH ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CENTRIX ENGINEERING (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CF AUTOMATION & ELECTRICAL SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CHINT GLOBAL (MALAYSIA) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CLEAN KINETICS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CMC ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CNNS TECHNASCO SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "COEE ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CTE PRIMA HOLDINGS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "CYPARK RENEWABLE ENERGY SDN. BHD",
+      "hq_state": "Negeri Sembilan",
+      "city": "Seremban",
+      "website": null,
+      "phone": null,
       "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
-      "blurb": "Award-winning EPCC solar provider (2000+ projects, 80 MWp delivered since 2021); Golden Bull Award 2024 winner. Covers residential, commercial, and industrial rooftop installations nationwide."
+      "focus": [
+        "commercial"
+      ],
+      "blurb": "Public-listed renewable-energy and large-scale solar developer."
     },
     {
-      "name": "Northern Solar",
+      "name": "D SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "D&P PROCESS SERVICES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DB ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DE NEW POWER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DE SKYLIGHT ROOFING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DE SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DEFINE ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DEKAD ALIRAN SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DITROLIC SDN BHD",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://ditrolicenergy.com/my",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "One of Malaysia's largest solar EPCCs; residential via Ditrolic Home."
+    },
+    {
+      "name": "DJR POWER SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DJR SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DREAM AUDIO SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DWISAUJANA (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DYNA SEGMEN SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DYNAMIC ENERGYTECH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "DYNASYNERGY TECHNOLOGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EARTH STREAM ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EASTERN PACIFIC PROPERTIES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EASTERN SOLAR TECHNOLOGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EC NEWENERGIE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ECO PERSONA PROJECT MANAGEMENT SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ECO SOLAR SOLUTIONS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ECO SUNERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ECOGENERATION BERHAD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ECOPOWER DYNAMICS (M) SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ECOSPHERE ENERGY SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ECOTECH ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EDCA ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EDCA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EFS REVISION ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EI POWER TECHNOLOGIES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ELAN NEW ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ELEAPS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ELECTRON HARVEST SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ENERCO ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ENERCON POWER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ENERGY POSSIBLE SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ENERXITE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EPENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EPISOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EPSILON ENVIRONMENTAL TECHNOLOGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ERAWORKSENERGY(MALAYSIA)SDNBHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ERS ENERGY SDN BHD",
       "hq_state": "Selangor",
-      "city": "Petaling Jaya",
-      "branches": ["Penang", "Kedah", "Perlis", "Perak"],
-      "website": "https://northernsolar.com.my",
-      "phone": "+603-7839 8319",
-      "coverage": "peninsular",
-      "focus": ["residential", "commercial"],
-      "blurb": "Publicly-listed (ACE Market 2025) solar EPCC specialist with strong northern-Malaysia roots. Penang branch in Bukit Mertajam; covers Penang, Perak, Kedah, Perlis, and expanding into Sabah."
+      "city": "Shah Alam",
+      "website": "https://ers.my",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Turnkey solar EPCC for homes and businesses."
     },
     {
-      "name": "Jesselton Solar Services",
+      "name": "ETD MAKMUR (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ETERNALGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EV CONNECTION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EVOLUTE ASIA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EXO SYNERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "EXPRESS MISSION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FABULOUS SUNVIEW SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FACC ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FIRST POWER ENGINEERING & SERVICES (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FNM INDUSTRIES SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FOUNDER ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FREE POWER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FYF ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "FZ ENERGY STORAGE SYSTEMS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GABUNGAN BINAAN JURUTENAGA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GAD ENERGY SDN. BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GADANG WORKS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GADING KENCANA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GEMILANG SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GENIUS WISDOM SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GLOBAL GRANDEUR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GME GREENTECH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GN TECH ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GOBYRENT SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GOLDEN LUSTRE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GREEN CORE CONSORTIUM SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GREEN INNOTECH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GREEN MAGNITUDE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GREEN SOURCE ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GREEN XPERTS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GREENERGY HARVEST SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GRIT SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GROWPOWER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GSPARX SDN. BHD.",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": null,
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "TNB Group's solar arm; residential rooftop with rent-to-own options."
+    },
+    {
+      "name": "GT SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GV BORNEO SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "GV BUMISINAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "H2 SUNERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HANDYMAN GROUP SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HASILWAN (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HEBAT JAYAMURNI SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HELIOS PHOTOVOLTAIC SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HELIOSEL SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HEXACHAMP SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HIGH SUMMER SYSTEMS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HLE ENGINEERING (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HOMAX SDN. BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HOMIFY ENERGY AND ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "HYBRIO MARKETING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "I 4 ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "I2 ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "IJR VENTURE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "IKON SUBSEA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "IL SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "IMPI SOLUTION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "INDAH SOLARGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "INFINERGI SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "INFO-MATIC POWER SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "INGENUITY ENERGY SOLUTIONS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "INHOME SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "INTELLIGENT POWER SYSTEM TECHNOLOGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ITRAMAS RE SERVICES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "JASE SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "JENTAYU UTARA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "JESSELTON SOLAR SERVICES SDN BHD",
       "hq_state": "Sabah",
       "city": "Kota Kinabalu",
       "website": "https://www.jesseltonsolar.com",
       "phone": "+6016-285 2991",
       "coverage": "regional",
-      "focus": ["residential", "commercial"],
+      "focus": [
+        "residential",
+        "commercial"
+      ],
       "blurb": "Self-described largest solar PV contractor in Sabah. Full EPCC, solar design, electrical works up to 132 kV, and long-term maintenance for residential, commercial, and industrial clients across Sabah."
     },
     {
-      "name": "Mestron Energy",
+      "name": "JKE POWER ELECTRICAL SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "JS SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "JT GREEN TECH SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "JYD GREENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KAB SMART SOLAR ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KAC ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KAL M&E ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KARA POWER ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KEE MING ELECTRICAL SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KEJURUTERAAN ABAD RIA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KEJURUTERAAN CAHAYA ABADI SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KEJURUTERAAN LETRIK KB SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KEMAKMURAN 2000 SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KEMUNING STRUCTURES SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KLUG ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KM SMART HOME SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KOMASI ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KOP CONSTRUCTION SERVICES (MALAYSIA) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KSR ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KWH SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "KYUDENKO MALAYSIA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LBL ELECTRICAL ENGINEERING (M) SDN.BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LEADWAY CONSULTANCY (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LEKSON RESOURCES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LEOPAD RENEWABLE ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LESTARI ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LEVERAGEDGE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LITAR ABADI ENGINEERING (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LONGI SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "LUMINOUS GREEN ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "M1 SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MABCON ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MAINLIGHT KT ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MAJUJAYA ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MALAYSIAN SOLAR RESOURCES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MAQO ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MARA INCORPORATED SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MASGY ENGINEERING & SERVICES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MAX BELL SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MAXIS GREEN SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MECHANICS SYNERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MENTARI ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MERCURE ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MESTRON ENERGY SDN BHD",
       "hq_state": "Selangor",
       "city": "Puchong",
       "website": "https://www.mestron.com.my",
       "phone": "+603-8069 1815",
       "coverage": "nationwide",
-      "focus": ["residential", "commercial"],
+      "focus": [
+        "residential",
+        "commercial"
+      ],
       "blurb": "Subsidiary of Mestron Holdings Berhad; holds both RPVSP and RPVI registrations with SEDA. Covers solar, biogas, hydro, and energy-efficiency projects for residential and commercial clients nationwide."
+    },
+    {
+      "name": "MH TECHNOLOGY MALAYSIA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MHA SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MICRO ENERGY HOLDINGS (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MIE INDUSTRIAL SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MILAB MARKETING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MILIEU SOLAR (SOUTHERN) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MILIEU SOLAR SDN BHD",
+      "hq_state": "Selangor",
+      "city": "Kota Damansara",
+      "website": "https://milieu.com.my",
+      "phone": "+603-7665 5727",
+      "whatsapp": "60127969790",
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Award-winning EPCC solar provider (2000+ projects, 80 MWp delivered since 2021); Golden Bull Award 2024 winner. Covers residential, commercial, and industrial rooftop installations nationwide."
+    },
+    {
+      "name": "MINGYANG SOLAR (M) SDN.BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MISI ANGGUN SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MNA GREEN TECH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MSR GREEN ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MULTILINK TECH ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "MY ENERGI INNOVATION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NADA SETIA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NCL ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NESTCON SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NEUTRINOS ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NEUTRON LETRIK SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NEWSTAR PAVILION RENEWABLE ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NEXT ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NGC ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NORTHERN SOLAR RAKYAT SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "NORTHERN SOLAR SDN. BHD.",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "website": "https://northernsolar.com.my",
+      "phone": "+603-7839 8319",
+      "coverage": "peninsular",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Publicly-listed (ACE Market 2025) solar EPCC specialist with strong northern-Malaysia roots. Penang branch in Bukit Mertajam; covers Penang, Perak, Kedah, Perlis, and expanding into Sabah.",
+      "branches": [
+        "Penang",
+        "Kedah",
+        "Perlis",
+        "Perak"
+      ]
+    },
+    {
+      "name": "NOVA SOLAR ENERGY SDN.BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ONE SOLAR ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ONEWORKS NEW ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "OPENSYS TECHNOLOGIES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ORTUS SYNERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PAN RENEWABLE ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PANASONIC MALAYSIA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PATHGREEN ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PEKAT RE MAINTENANCE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PEKAT SOLAR SDN BHD",
+      "hq_state": "Selangor",
+      "city": "Puchong",
+      "website": null,
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Public-listed solar & earthing group covering residential and C&I rooftop."
+    },
+    {
+      "name": "PEMBINAAN SEGALA TEGUH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PENGUIN ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PENSOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PHOENIX GREEN ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PHOTOVOLTAIC FOUNDRY (M) SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PLUS XNERGY MICRO SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PLUS XNERGY SERVICES SDN BHD",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://www.plusxnergy.com",
+      "phone": null,
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Award-winning C&I and residential solar provider."
+    },
+    {
+      "name": "PLUSMAX ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "POWERTRACK SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PPK TECHNOLOGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PPT BAROKAH SERVICES (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PRIM VENTURES SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PRINCIPAL ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PRINSIP HASIL SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PRO GENERATION IT SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PRO SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PROGRESSIVE IMPACT TECHNOLOGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PROGRESSTURE POWER SDN BHD",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://www.progressturesolar.com",
+      "phone": "+603-6413 6568",
+      "whatsapp": "60193183278",
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Southeast Asia-focused EPCC solar developer and RPVI; holds SEDA RPVSP, RPVI, and G7 CIDB licence. Serves residential rooftops through to utility-scale farms; also offers battery storage, EV charging, PPAs, and sustainability consulting.",
+      "priority_states": [
+        "Kuala Lumpur",
+        "Selangor",
+        "Penang",
+        "Johor",
+        "Sabah",
+        "Sarawak"
+      ]
+    },
+    {
+      "name": "PROKSI WAWASAN AUTOMATION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PURATA ABADI SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "PV HI TECH SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "QAF ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "QT ENVIRONMENTAL (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "QUANTUM RENEWABLE ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "QUEST ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "QUILL SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RAFFLES GREEN ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RAPS SOLUTIONS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RAY GO SOLAR EPC SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RAY ORIGIN SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RAYTRIFY ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RE PATH (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "REGAL RIVER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RENEWABLE SOLAR ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RENOSUN SDN BHD",
+      "hq_state": "Kedah",
+      "city": "Alor Setar",
+      "website": "https://www.renosungroup.com",
+      "phone": "+604-731 9922",
+      "coverage": "peninsular",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "14-year northern specialist (400+ installs); 80%+ of projects in Kedah, Perlis and Penang.",
+      "branches": [
+        "Perlis"
+      ]
+    },
+    {
+      "name": "RESTORE SOLUTIONS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RESTU INDAH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "REVOTECH ELECTRICAL SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "REVOTECH ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "REWATTS ENERGY SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RODA EMAS INDUSTRIES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "RPG GREEN TECHNOLOGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SAG GREEN TECH SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SAHABAT TENAGA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SAMAIDEN SDN BHD",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kepong",
+      "website": "https://samaiden.com.my",
+      "phone": "+603-6150 7941",
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Public-listed renewable-energy EPCC and consultancy."
+    },
+    {
+      "name": "SAVELITE ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SFS ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SG ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SHAF INDUSTRIES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SHER ENGINEERING & CONSULTANCY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SINAR TM SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SINAR VOLTA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SKY POWER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SMART RELIANCE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SNF GRANDTECH (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOL POWER ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLANA TEC SDN BHD",
+      "hq_state": "Johor",
+      "city": "Johor Bahru",
+      "website": "https://www.solanatec.com.my",
+      "phone": "+6016-720 3487",
+      "whatsapp": "60167203487",
+      "coverage": "peninsular",
+      "focus": [
+        "residential"
+      ],
+      "blurb": "Residential solar specialist serving Johor and Melaka.",
+      "branches": [
+        "Melaka"
+      ]
+    },
+    {
+      "name": "SOLAR BEE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR ECO ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR EDGE SOLUTION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR GALACTIC (M) SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR GRENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR SENTINEL SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR SKYWORKS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR SOLUTION SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR SUNYIELD SDN BHD",
+      "hq_state": "Perak",
+      "city": "Ipoh",
+      "website": "https://www.solarsunyield.com",
+      "phone": "+605-541 5663",
+      "whatsapp": "60136598498",
+      "coverage": "peninsular",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Ipoh-based installer for homes and businesses across Perak and the Klang Valley."
+    },
+    {
+      "name": "SOLAR TIMUR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR VOLTECH SDN. BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAR WISE ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLARAX SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLARE TRUSS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAREUM SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLARIZE ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLARLINK ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLAROO SYSTEMS SDN BHD",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "website": "https://solaroo.com",
+      "phone": null,
+      "whatsapp": "60125928010",
+      "coverage": "nationwide",
+      "focus": [
+        "residential"
+      ],
+      "blurb": "Home-solar specialist offering end-to-end NEM installation and financing."
+    },
+    {
+      "name": "SOLARTECH SALES AND SERVICE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLARVEST ENERGY (SR) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLARVEST ENERGY SDN. BHD.",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "website": "https://solarvest.com",
+      "phone": "+603-7625 3211",
+      "coverage": "nationwide",
+      "focus": [
+        "residential",
+        "commercial"
+      ],
+      "blurb": "Public-listed solar EPCC. Residential rooftop via its PowerVest home arm."
+    },
+    {
+      "name": "SOLFOCUS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLGEN (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOLS ENERGY SDN. BHD",
+      "hq_state": "Kuala Lumpur",
+      "city": "Kuala Lumpur",
+      "website": "https://www.solsenergy.com",
+      "phone": "+6018-399 9247",
+      "whatsapp": "60183999247",
+      "coverage": "nationwide",
+      "focus": [
+        "residential"
+      ],
+      "blurb": "Residential solar social enterprise with a strong home-install focus."
+    },
+    {
+      "name": "SOLSTICE SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SOUTHERN SOLAR PV ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SPAX ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "STARLIGHT GREEN ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SU HUA ECOPOWER ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUMMIT ENERGY RESOURCES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUN POWER INDUSTRIES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNCATCHER SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNCROX SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNGAI MANAL INDAH ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNGATE ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNKET SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNNY SKY SOLUTIONS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNRISE SHARES ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNROCK ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNTERRA ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUNWAY ENGINEERING SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUPREME BROTHERS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SURE SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SURIA DAN SONNE SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SURIA ENGINEERING SOLUTIONS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SURIA INFINITI SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SURIA SINAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SURIAWORLD TECHNOLOGIES SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUSTAINABLE & INNOVATION ENGINEERING SDN. BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SUSTAINNO SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SWEE SENG ELECTRICAL ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SYAF ARMADA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SYARIKAT PEMBENAAN YEOH TIONG LAY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SYMMETRY ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SYNERGY GENERATED SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SYNERGY MECHANICA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "SYSTEM PROTECTION & MAINTENANCE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TAIACE ENERGY SERVICES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TASEK HAZA ENGINEERING & SERVICES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TATLER ENERGY AND RESOURCES SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TECH-STORE MALAYSIA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TECHNITEC ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TECHNOFIT SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TENAGA HELIOS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TENAGA RENEWA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TENAGA SOLAR JAYA MAJU SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TENAGARE SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TEP SOLAR SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TERA VA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TERAJU LIMA (M) SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TERRA FORCE SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TESDEC SERVICES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "THE ONE DECOR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "THE SOLAR HOUSE SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "THIQA OMNIA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "THITHER GLOBAL (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "THURSINAR CORPORATION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "THURSINAR ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TIANCE RESEARCH SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TIME ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TIMES-LITE ELECTRICAL ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TITAN EDGE VENTURE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TNB ENERGY SERVICES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TNG RESOURCES & DEVELOPMENT SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TOKAI ENGINEERING (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TOKUGAWA ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TOONEX ENERGIA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TOTAL DYNAMIC SOLUTIONSDNBHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TOTAL IFM SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TOTAL POWER SOLUTIONS SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TRANSWATER API SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "TTOP INDUSTRIAL & ENGINEERING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "U.D. ENTERPRISE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "UNIPAC INDUSTRIES (M) SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "UNITED SOLAR ENERGY MALAYSIA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "URS ENTERPRISE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "UV SOLAR SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "UZMA ENVIRONERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VELLD POWER SYSTEM CONSULT SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VERDANT SOLAR SDN. BHD.",
+      "hq_state": "Selangor",
+      "city": "Petaling Jaya",
+      "website": "https://verdantsolar.my",
+      "phone": null,
+      "whatsapp": "601112507503",
+      "coverage": "peninsular",
+      "focus": [
+        "residential"
+      ],
+      "blurb": "Residential-focused rooftop installer serving the Klang Valley and Peninsular Malaysia."
+    },
+    {
+      "name": "VESTECH ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VITAL STARLIBRA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VIVA COMPLETE SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VOLTA ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VOLTAKE ENERGY SERVICES SDN.BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VOLTEK ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "VSD AUTOMATION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "W ONE TECH ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "WASAMAJU GLOBAL SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "WAZLINA SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "WE POWER VENTURE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "WINDCRAFT SOLAR ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "WIRA JAYA ELECTRICAL AND TRADING SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "WORLDWIDE POWER SOLUTIONS SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "XENERGI SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "XOLAR SOLUTION SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YC GLOBAL HOUSE SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YEC ENERGY SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YHK RESOURCES SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YMB SOLUTIONS SERVICES SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YOKOGAWA ELECTRIC MALAYSIA SDN. BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YONGYANG SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YP ENERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "YS ELECTRICAL & ENGINEERING SDN.BHD.",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
+    },
+    {
+      "name": "ZINNIA SYNERGY SDN BHD",
+      "hq_state": null,
+      "city": null,
+      "website": null,
+      "phone": null,
+      "coverage": null,
+      "focus": [],
+      "blurb": null
     }
   ]
 }

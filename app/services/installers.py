@@ -6,9 +6,10 @@ state has none, we are upfront about it and surface the *nearest* state that doe
 have registered installers (walking a hand-built proximity map by driving
 distance), so a user in e.g. Kedah still gets a useful, honest answer.
 
-Data lives in app/data/rpvsp.json — a curated subset of SEDA's RPVSP directory
-(the official directory is login-gated and not publicly browsable). Swapping in a
-fuller export later is just a matter of replacing that JSON file.
+Data lives in app/data/rpvsp.json — the full SEDA RPVSP listing (435 companies)
+from https://services.seda.gov.my/spqp/listing. That export publishes company
+names only, so all but ~23 entries carry a name and nothing else; those are
+returned in the separate "directory" group rather than ranked by state.
 """
 import json
 import os
@@ -66,7 +67,11 @@ def _load() -> dict:
 
 @lru_cache(maxsize=1)
 def _canonical_states() -> set[str]:
-    return {i["hq_state"] for i in _load()["installers"]} | set(PROXIMITY.keys())
+    # Most registry entries carry no hq_state (SEDA's listing publishes names
+    # only), so drop the Nones before they poison the comparison below.
+    return {
+        i["hq_state"] for i in _load()["installers"] if i.get("hq_state")
+    } | set(PROXIMITY.keys())
 
 
 def normalize_state(state: str | None) -> str | None:
@@ -95,6 +100,39 @@ def meta() -> dict:
     return _load()["_meta"]
 
 
+def _pinned_for(state: str) -> list[dict]:
+    """Commercial placements for `state`.
+
+    Driven entirely by the `priority_states` list on the entry itself, so the
+    ranking rule lives in the data rather than in code or in the UI. An entry
+    pinned for a state is returned for that state even when it is not HQ'd
+    there and even when the result set came from the nearest-state fallback.
+    """
+    return [
+        i for i in _load()["installers"]
+        if state in (i.get("priority_states") or [])
+    ]
+
+
+def _rank(state: str, base: list[dict]) -> list[dict]:
+    """Pinned entries first, then the rest, with no entry listed twice."""
+    pinned = _pinned_for(state)
+    pinned_names = {i["name"] for i in pinned}
+    return pinned + [i for i in base if i["name"] not in pinned_names]
+
+
+def _remainder(shown: list[dict]) -> list[dict]:
+    """Every other registered company, for the "also SEDA-registered" group.
+
+    SEDA's listing publishes company names without a state column, so ~95% of
+    the registry cannot be matched to a state. Rather than let those entries sit
+    in the file unreachable, they are returned here — unranked and clearly
+    separate from the state-matched results.
+    """
+    shown_names = {i["name"] for i in shown}
+    return [i for i in _load()["installers"] if i["name"] not in shown_names]
+
+
 def find_installers(state: str | None) -> dict:
     """
     Resolve installers for a user's state.
@@ -105,8 +143,10 @@ def find_installers(state: str | None) -> dict:
         "resolved": bool,            # did we recognise the state at all
         "fallback": bool,            # True when we had to use a nearby state
         "nearest_state": str | None, # set when fallback is True
-        "installers": [...],
+        "installers": [...],       # state-matched, pinned placements first
         "count": int,
+        "directory": [...],        # every other registered company, unranked
+        "directory_count": int,
         "official_directory": str,
       }
     """
@@ -117,14 +157,18 @@ def find_installers(state: str | None) -> dict:
         return {
             "requested_state": state, "resolved": False, "fallback": False,
             "nearest_state": None, "installers": [], "count": 0,
+            "directory": [], "directory_count": 0,
             "official_directory": official,
         }
 
     direct = installers_in(canon)
     if direct:
+        ranked = _rank(canon, direct)
+        rest = _remainder(ranked)
         return {
             "requested_state": canon, "resolved": True, "fallback": False,
-            "nearest_state": None, "installers": direct, "count": len(direct),
+            "nearest_state": None, "installers": ranked, "count": len(ranked),
+            "directory": rest, "directory_count": len(rest),
             "official_directory": official,
         }
 
@@ -132,15 +176,21 @@ def find_installers(state: str | None) -> dict:
     for near in PROXIMITY.get(canon, []):
         near_list = installers_in(near)
         if near_list:
+            # Pinning is by the state the user asked for, not the fallback state.
+            ranked = _rank(canon, near_list)
+            rest = _remainder(ranked)
             return {
                 "requested_state": canon, "resolved": True, "fallback": True,
-                "nearest_state": near, "installers": near_list, "count": len(near_list),
+                "nearest_state": near, "installers": ranked, "count": len(ranked),
+                "directory": rest, "directory_count": len(rest),
                 "official_directory": official,
             }
 
     # Should never happen (hubs always populated), but stay safe.
+    pinned = _pinned_for(canon)
     return {
         "requested_state": canon, "resolved": True, "fallback": False,
-        "nearest_state": None, "installers": [], "count": 0,
+        "nearest_state": None, "installers": pinned, "count": len(pinned),
+        "directory": _remainder(pinned), "directory_count": len(_remainder(pinned)),
         "official_directory": official,
     }
