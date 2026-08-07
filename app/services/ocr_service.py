@@ -406,19 +406,25 @@ CLAUDE_MODEL    = "claude-haiku-4-5-20251001"   # fast + cheap vision, ~1-2 sen/
 CLAUDE_MAX_EDGE = 1568                 # Claude reads best ≤1568px; caps token cost
 
 _CLAUDE_PROMPT = (
-    "You are a precise data extractor for Malaysian TNB (Tenaga Nasional) "
-    "electricity bills. From the bill image, return ONLY a JSON object (no prose) "
-    "with these keys: "
-    '{"state": <Malaysian state name e.g. "Kedah"/"Selangor"/"Penang", or null>, '
+    "You are a precise data extractor for Malaysian electricity bills. "
+    "The bill may be from any of the three utilities: TNB (Tenaga Nasional, "
+    "Peninsular Malaysia), SESB (Sabah Electricity, Sabah), or SESCO "
+    "(Sarawak Energy, Sarawak). From the bill image, return ONLY a JSON "
+    "object (no prose) with these keys: "
+    '{"state": <Malaysian state name e.g. "Kedah"/"Selangor"/"Penang"/"Sabah"/"Sarawak", or null>, '
     '"monthly_kwh": <the month\'s total electricity usage in kWh as a number — '
-    'the value next to "Jumlah Penggunaan Anda" or the meter "Penggunaan" column, '
+    'the value next to "Jumlah Penggunaan Anda", the "Kegunaan (kWh)" row, '
+    'the "Total Units" column, or the meter "Penggunaan" column, '
     'or null>, '
-    '"bill_amount_rm": <total amount payable in RM as a number, or null>, '
-    '"tariff_category": <e.g. "Domestik", or null>, '
+    '"bill_amount_rm": <total amount payable in RM as a number — e.g. next to '
+    '"Jumlah Perlu Dibayar" (SESB), "TOTAL AMOUNT" (SESCO), or "Jumlah Yang '
+    'Perlu Dibayar" (TNB) — or null>, '
+    '"tariff_category": <e.g. "Domestik"/"Domestic"/"DM", or null>, '
     '"confidence": <0.0 to 1.0>}. '
     "Use null if a value is not clearly visible; do NOT guess or hallucinate. "
     "monthly_kwh is the month's usage (typically 100-2000), never a tariff "
-    "threshold like 300/600/900 from fine print. Return only the JSON."
+    "threshold like 300/600/900 from fine print such as "
+    "'First 600 kWh' or '600kWh' rate notes. Return only the JSON."
 )
 
 
