@@ -175,6 +175,9 @@ def _parse_meter_readings(text: str) -> tuple[float, float] | None:
         r"previous[^\d]{0,20}([\d,]+)[^\d]{0,50}current[^\d]{0,20}([\d,]+)",
         # "Bacaan Lama  6695  Bacaan Baru  7162"
         r"bacaan\s+lama[^\d]{0,20}([\d,]+)[^\d]{0,50}bacaan\s+baru[^\d]{0,20}([\d,]+)",
+        # SESCO: header "Previous Reading  Current Reading  Total Units" sits on
+        # one line, values on the next: "10P103481:001  120,439 KWH  122,083 KWH  1,644 KWH"
+        r"previous\s+reading[^\d]{0,60}current\s+reading[^\d]{0,60}total\s+units?[^\d]{0,60}[\w:]+[^\d]{0,10}([\d,]+)\s*kwh[^\d]{0,10}([\d,]+)\s*kwh[^\d]{0,10}([\d,]+)\s*kwh",
     ]
     for pat in meter_patterns:
         for src in (text_flat, text_lower):
@@ -301,8 +304,14 @@ def _parse_bill_amount(text: str) -> float | None:
         r"(?:jumlah\s+(?:yang\s+)?(?:perlu\s+)?dibayar|amount\s+(?:due|payable))[^\d]{0,50}(?:rm\s*)?(\d[\d,]*\.\d{2})",
         # NOTE: no bare "jumlah …" pattern — it matched "Jumlah Penggunaan Anda
         # … 467.00" (the usage row) and returned the kWh value as the amount.
+        # SESCO: "TOTAL AMOUNT  1,116.60" — the words are adjacent, and this is
+        # the grand total, NOT "Total Current Charges" (monthly subtotal). Put
+        # the adjacent-word form FIRST so it wins over the generic total below.
+        r"total\s+amount[^\d]{0,30}(?:rm\s*)?(\d[\d,]*\.\d{2})",
         # "TOTAL AMOUNT  RM 185.50" / "TOTAL  185.50"
-        r"total\s+(?:amount\s+)?(?:due\s+)?[^\d]{0,30}(?:rm\s*)?(\d[\d,]*\.\d{2})",
+        # (generic form — must NOT match "Total Current Charges 544.15", so it
+        # excludes "current charges" via a negative lookahead)
+        r"total(?![^\d]{0,10}current\s+charges)[^\d]{0,4}(?:amount\s+)?(?:due\s+)?[^\d]{0,30}(?:rm\s*)?(\d[\d,]*\.\d{2})",
         # "Amaun Dibayar / Amount Paid"
         r"amaun[^\d]{0,40}(?:rm\s*)?(\d[\d,]*\.\d{2})",
         # "Bayaran / Payment"
